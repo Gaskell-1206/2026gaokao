@@ -3,6 +3,7 @@
 
 # Keep Pages files
 !gaokao_dashboard.html
+!index.html
 !share.html
 !GITHUB_PAGES_DEPLOYMENT.md
 !.gitignore
