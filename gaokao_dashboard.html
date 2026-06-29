@@ -1,0 +1,3571 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>福建高考志愿记录表</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #172026;
+      --muted: #64717d;
+      --line: #d9dee4;
+      --accent: #0b6bcb;
+      --rush: #b42318;
+      --stable: #946200;
+      --safe: #067647;
+      --floor: #344054;
+      --rush-bg: #fff3f0;
+      --stable-bg: #fff8df;
+      --safe-bg: #eaf8ef;
+      --floor-bg: #f2f4f7;
+      --shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      padding: 18px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin: 0 0 6px;
+      letter-spacing: 0;
+    }
+
+    .subhead {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    main {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 20px 24px 40px;
+    }
+
+    .toolbar,
+    .form-grid,
+    .summary {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 12px;
+      align-items: end;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(130px, 1fr));
+      gap: 12px;
+    }
+
+    .span-2 {
+      grid-column: span 2;
+    }
+
+    .span-3 {
+      grid-column: span 3;
+    }
+
+    .span-6 {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+      font: inherit;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 10px;
+      background: #fff;
+      color: var(--text);
+      min-height: 38px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 74px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      min-height: 38px;
+    }
+
+    button.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    button.danger {
+      color: var(--rush);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.35;
+    }
+
+    .sort-btn {
+      background: transparent;
+      border: 0;
+      color: inherit;
+      cursor: pointer;
+      font-weight: 700;
+      min-height: 0;
+      padding: 0;
+      text-align: left;
+    }
+
+    .sort-btn::after {
+      color: var(--muted);
+      content: " ↕";
+      font-weight: 400;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      border-left: 4px solid var(--line);
+      padding-left: 10px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 22px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1680px;
+      font-size: 13px;
+    }
+
+    .pool-table {
+      min-width: 1500px;
+      table-layout: fixed;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eef2f6;
+      z-index: 5;
+      white-space: nowrap;
+    }
+
+    tbody tr:hover {
+      background: #f9fbfd;
+    }
+
+    .tag {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .tag.rush {
+      color: var(--rush);
+      background: #fef3f2;
+    }
+
+    .tag.stable {
+      color: var(--stable);
+      background: #fffaeb;
+    }
+
+    .tag.safe {
+      color: var(--safe);
+      background: #ecfdf3;
+    }
+
+    .tag.pass {
+      color: var(--safe);
+      background: #ecfdf3;
+    }
+
+    .tag.warn {
+      color: var(--stable);
+      background: #fffaeb;
+    }
+
+    .tag.fail {
+      color: var(--rush);
+      background: #fef3f2;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .pool-detail-row td {
+      background: #fbfcfe;
+      padding: 10px 12px;
+    }
+
+    .pool-summary-row {
+      cursor: pointer;
+    }
+
+    .pool-summary-row.removed {
+      color: var(--muted);
+      opacity: 0.78;
+    }
+
+    .pool-toggle-cell {
+      min-width: 132px;
+      white-space: normal;
+    }
+
+    .pool-toggle-cell .tag {
+      margin: 0 4px 4px 0;
+    }
+
+    .pool-major-groups {
+      display: grid;
+      gap: 10px;
+    }
+
+    .pool-major-group {
+      border: 1px solid #e5e9ef;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .pool-major-group h3 {
+      background: #f3f6fa;
+      font-size: 13px;
+      margin: 0;
+      padding: 8px 10px;
+    }
+
+    .pool-major-table {
+      min-width: 0;
+      table-layout: auto;
+    }
+
+    .pool-major-table th,
+    .pool-major-table td {
+      padding: 6px 8px;
+    }
+
+    .mini-btn {
+      min-height: 26px;
+      padding: 3px 8px;
+    }
+
+    .modal-backdrop {
+      align-items: center;
+      background: rgba(15, 23, 42, 0.32);
+      display: flex;
+      inset: 0;
+      justify-content: center;
+      padding: 24px;
+      position: fixed;
+      z-index: 50;
+    }
+
+    .modal-backdrop.hidden {
+      display: none;
+    }
+
+    .modal-panel {
+      background: var(--panel);
+      border-radius: 8px;
+      box-shadow: 0 16px 48px rgba(15, 23, 42, 0.22);
+      max-height: 82vh;
+      max-width: 860px;
+      overflow: auto;
+      padding: 16px;
+      width: min(860px, 100%);
+    }
+
+    .modal-header {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .modal-header h2 {
+      font-size: 18px;
+      margin: 0;
+    }
+
+    .modal-panel table {
+      min-width: 720px;
+    }
+
+    .final-board {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .tier-section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .tier-section-header {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 12px;
+    }
+
+    .tier-section-header h2 {
+      font-size: 16px;
+      margin: 0;
+    }
+
+    .tier-section.rush {
+      border-left: 4px solid var(--rush);
+    }
+
+    .tier-section.stable {
+      border-left: 4px solid #d6a000;
+    }
+
+    .tier-section.safe {
+      border-left: 4px solid var(--safe);
+    }
+
+    .tier-section.floor {
+      border-left: 4px solid var(--floor);
+    }
+
+    .final-choice-table {
+      min-width: 980px;
+    }
+
+    .final-choice-table td,
+    .final-choice-table th {
+      padding: 7px 8px;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .view-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .app-view {
+      display: none;
+    }
+
+    .app-view.active {
+      display: block;
+    }
+
+    .query-grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(80px, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .filter-module {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      border-radius: 8px;
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 12px;
+      padding: 14px;
+      align-items: end;
+    }
+
+    .module-wide {
+      grid-column: span 6;
+    }
+
+    .module-full {
+      grid-column: 1 / -1;
+    }
+
+    .module-title {
+      grid-column: 1 / -1;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 8px;
+      margin-bottom: 2px;
+    }
+
+    .module-title h2 {
+      margin: 0;
+      font-size: 15px;
+      letter-spacing: 0;
+    }
+
+    .module-title p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .score-focus {
+      border-top: 3px solid var(--accent);
+    }
+
+    .tier-module {
+      grid-template-columns: repeat(4, minmax(160px, 1fr));
+      align-items: stretch;
+    }
+
+    .tier-band {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 112px;
+    }
+
+    .tier-band label {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .tier-band input {
+      margin-top: 8px;
+      border-color: rgba(0, 0, 0, 0.12);
+      font-weight: 700;
+    }
+
+    .tier-band small {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .tier-rush {
+      background: var(--rush-bg);
+      border-color: #f4b4aa;
+    }
+
+    .tier-rush label,
+    .tier-rush input {
+      color: var(--rush);
+    }
+
+    .tier-stable {
+      background: var(--stable-bg);
+      border-color: #e8cd72;
+    }
+
+    .tier-stable label,
+    .tier-stable input {
+      color: var(--stable);
+    }
+
+    .tier-safe {
+      background: var(--safe-bg);
+      border-color: #9bd7ad;
+    }
+
+    .tier-safe label,
+    .tier-safe input {
+      color: var(--safe);
+    }
+
+    .tier-floor {
+      background: var(--floor-bg);
+      border-color: #cfd5df;
+    }
+
+    .tier-floor label,
+    .tier-floor input {
+      color: var(--floor);
+    }
+
+    .rank-rule {
+      border: 1px solid #b9d6f2;
+      background: #f2f8ff;
+      border-radius: 8px;
+      color: #174a7c;
+      font-size: 13px;
+      padding: 10px 12px;
+    }
+
+    .rank-ref {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .exclusion-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      grid-column: 1 / -1;
+    }
+
+    .exclude-panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      min-height: 150px;
+    }
+
+    .exclude-panel h3 {
+      margin: 0 0 8px;
+      font-size: 13px;
+    }
+
+    .exclude-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 6px;
+      max-height: 220px;
+      overflow: auto;
+    }
+
+    .exclude-option {
+      align-items: flex-start;
+      border: 1px solid #e5e9ef;
+      border-radius: 6px;
+      display: flex;
+      gap: 6px;
+      padding: 6px 8px;
+      background: #fbfcfe;
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .exclude-option input {
+      margin-top: 2px;
+      min-height: auto;
+      width: auto;
+    }
+
+    .filter-trace {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+      padding: 12px;
+    }
+
+    .flow-export-actions {
+      justify-content: flex-end;
+      margin: -4px 0 16px;
+    }
+
+    .trace-step {
+      border-left: 3px solid var(--accent);
+      padding-left: 8px;
+    }
+
+    .trace-step strong {
+      display: block;
+      font-size: 16px;
+    }
+
+    .trace-step span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .secondary-module {
+      background: #fbfcfe;
+    }
+
+    .step-score {
+      order: 1;
+    }
+
+    .step-tier {
+      order: 2;
+    }
+
+    .step-major {
+      order: 4;
+    }
+
+    .step-region {
+      order: 5;
+    }
+
+    .profile-grid {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      border-radius: 8px;
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 16px;
+    }
+
+    .profile-item {
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
+      min-height: 44px;
+    }
+
+    .profile-item strong {
+      display: block;
+      font-size: 16px;
+    }
+
+    .profile-item span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .compact-table td,
+    .compact-table th {
+      padding: 6px 7px;
+      max-width: 220px;
+    }
+
+    .compact-table {
+      table-layout: fixed;
+      min-width: 1580px;
+    }
+
+    .screen-table {
+      table-layout: fixed;
+      min-width: 920px;
+    }
+
+    .compact-table .w-xs {
+      width: 52px;
+    }
+
+    .compact-table .w-sm {
+      width: 72px;
+    }
+
+    .compact-table .w-md {
+      width: 96px;
+    }
+
+    .compact-table .w-lg {
+      width: 150px;
+    }
+
+    .compact-table .w-xl {
+      width: 210px;
+    }
+
+    .compact-table .section-generated {
+      border-left: 2px solid #b8c4d0;
+      background: #fbfcfe;
+    }
+
+    .truncate {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    details.folded-note summary {
+      color: var(--accent);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    details.folded-note div {
+      margin-top: 6px;
+      max-width: 360px;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    @media (max-width: 900px) {
+      header {
+        position: static;
+      }
+
+      .toolbar,
+      .form-grid,
+      .summary,
+      .query-grid,
+      .filter-module,
+      .tier-module,
+      .exclusion-grid,
+      .filter-trace,
+      .profile-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .module-wide,
+      .module-full {
+        grid-column: auto;
+      }
+
+      .span-2,
+      .span-3,
+      .span-6 {
+        grid-column: auto;
+      }
+
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>福建普通类本科批志愿记录表</h1>
+    <div class="subhead">按“院校专业组”记录候选项：本科批常规志愿最多 50 个院校专业组，每组最多 6 个专业志愿。</div>
+  </header>
+
+  <main>
+    <nav class="view-tabs" aria-label="页面切换">
+      <button class="tab-btn active" data-view="queryView">院校专业筛选</button>
+      <button class="tab-btn" data-view="fullPlanView">招生计划全量</button>
+      <button class="tab-btn" data-view="poolView">备选池</button>
+      <button class="tab-btn" data-view="plannerView">候选志愿表</button>
+    </nav>
+
+    <div id="queryView" class="app-view active">
+      <section class="profile-grid" aria-label="考生画像与五步法参数">
+        <div class="profile-item"><strong>505 分</strong><span>2026 福建物理类</span></div>
+        <div class="profile-item"><strong>75826 位</strong><span>2026 省排名</span></div>
+        <div class="profile-item"><strong>492 分</strong><span>2025 等位分</span></div>
+        <div class="profile-item"><strong>物化地 / 日语</strong><span>硬条件优先检查</span></div>
+        <div class="profile-item"><strong>福州户籍</strong><span>关注面向福州机会</span></div>
+        <div class="profile-item"><strong>保专业优先</strong><span>地理相关 &gt; 工科</span></div>
+      </section>
+
+      <section class="query-grid" aria-label="招生计划查询">
+        <div class="filter-module module-full score-focus step-score">
+          <div class="module-title">
+            <h2>第一步：分数定位</h2>
+            <p>输入你的分数和位次，再设置冲稳保分数段。</p>
+          </div>
+          <div>
+            <label for="currentScore2026">你的分数</label>
+            <input id="currentScore2026" type="number" value="505">
+          </div>
+          <div>
+            <label for="equivScore2025">2025等位分</label>
+            <input id="equivScore2025" type="number" value="492">
+          </div>
+          <div>
+            <label for="currentRank2026">当前位次</label>
+            <input id="currentRank2026" type="number" value="75826">
+          </div>
+          <div>
+            <label for="rankWindowLow">位次下限</label>
+            <input id="rankWindowLow" type="number" value="67990">
+          </div>
+          <div>
+            <label for="rankWindowHigh">位次上限</label>
+            <input id="rankWindowHigh" type="number" value="99057">
+          </div>
+          <div>
+            <label for="planTierFilter">档位</label>
+            <select id="planTierFilter">
+              <option value="range">只看冲稳保垫</option>
+              <option value="">全部</option>
+              <option value="稳保垫">只看稳/保/垫底</option>
+              <option value="冲">冲</option>
+              <option value="稳">稳</option>
+              <option value="保">保</option>
+              <option value="垫底">垫底</option>
+              <option value="未匹配">未匹配</option>
+            </select>
+          </div>
+          <div>
+            <label for="planSort">排序</label>
+            <select id="planSort">
+              <option value="tier">档位优先</option>
+              <option value="score">2025分数</option>
+              <option value="rank">2025位次</option>
+              <option value="school">学校</option>
+              <option value="plan">计划数</option>
+              <option value="major">专业</option>
+            </select>
+          </div>
+          <div class="rank-rule span-6" id="rankRuleHint">按 75826 位计算：冲 68243 位约 501 分；稳 83409 位约 483 分；保底 98574 位约 465 分。</div>
+          <div class="actions span-6">
+            <button id="recalcRankBands">按 0.9 / 1.1 / 1.3 重算分段</button>
+            <button id="saveBandSettings">保存分数段</button>
+            <button id="resetBandSettings">重置默认分数段</button>
+          </div>
+        </div>
+
+        <div class="filter-module module-full tier-module step-tier">
+          <div class="module-title">
+            <h2>冲稳保分数段</h2>
+            <p>第一步只看分数是否匹配；每段下方显示 2025 一分一段参考位次。</p>
+          </div>
+          <div class="tier-band tier-rush">
+            <label for="rushMin">冲</label>
+            <input id="rushMin" value="490-501">
+            <span class="rank-ref" id="rushRankRef"></span>
+            <small>略高于等位分，数量控制，专业组内专业要能接受。</small>
+          </div>
+          <div class="tier-band tier-stable">
+            <label for="stableMin">稳</label>
+            <input id="stableMin" value="483-490">
+            <span class="rank-ref" id="stableRankRef"></span>
+            <small>主力候选区间，优先做专业和城市筛选。</small>
+          </div>
+          <div class="tier-band tier-safe">
+            <label for="safeMin">保</label>
+            <input id="safeMin" value="465-483">
+            <span class="rank-ref" id="safeRankRef"></span>
+            <small>用于提高录取确定性，重点看专业组内部风险。</small>
+          </div>
+          <div class="tier-band tier-floor">
+            <label for="floorMin">垫底</label>
+            <input id="floorMin" value="440-465">
+            <span class="rank-ref" id="floorRankRef"></span>
+            <small>防滑档区间，后续必须逐项核验硬条件。</small>
+          </div>
+        </div>
+
+        <div class="filter-module module-full secondary-module step-major">
+          <div class="module-title">
+            <h2>第二步：专业筛选</h2>
+            <p>可以正向包含关键词，也可以反向排除不想看的专业；下方可快速勾掉专业组或单个专业。</p>
+          </div>
+          <div>
+            <label for="planKeywordMode">专业关键词模式</label>
+            <select id="planKeywordMode">
+              <option value="include">包含这些词</option>
+              <option value="exclude">排除这些词</option>
+            </select>
+          </div>
+          <div class="span-2">
+            <label for="planKeyword">专业关键词</label>
+            <input id="planKeyword" placeholder="计算机、临床、护理 / 排除：土木 化工">
+          </div>
+          <div>
+            <label for="planPreference">专业偏好</label>
+            <select id="planPreference">
+              <option value="">全部</option>
+              <option value="geo">地理相关</option>
+              <option value="engineering">工科</option>
+            </select>
+          </div>
+          <div>
+            <label for="planOwnership">办学性质</label>
+            <select id="planOwnership">
+              <option value="">全部</option>
+              <option value="公办">公办</option>
+              <option value="民办">民办</option>
+              <option value="中外合作">中外合作</option>
+            </select>
+          </div>
+          <div class="actions span-6">
+            <label><input id="onlyRankWindow" type="checkbox" checked> 使用位次窗口</label>
+            <label><input id="keepUnmatchedScores" type="checkbox" checked> 保留无往年成绩</label>
+            <label><input id="onlySubjectEligible" type="checkbox"> 只看物化地可报</label>
+            <label><input id="hideLanguageBlocked" type="checkbox"> 隐藏明确不招日语</label>
+            <label><input id="onlyFuzhouOpportunity" type="checkbox"> 福州相关机会</label>
+            <button id="addPlanResults">加入当前结果到候选表</button>
+            <button id="addSchoolResults">加入当前学校到备选池</button>
+            <button id="saveExclusions">保存专业排除</button>
+            <button id="clearExclusions">清除专业排除</button>
+            <button id="clearPlanSearch">清除查询</button>
+          </div>
+          <div class="exclusion-grid">
+            <div class="exclude-panel">
+              <h3>排除专业组</h3>
+              <div class="exclude-options" id="excludeGroupOptions"></div>
+            </div>
+            <div class="exclude-panel">
+              <h3>按专业名称排除</h3>
+              <div class="exclude-options" id="excludeMajorOptions"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-module module-full secondary-module step-region">
+          <div class="module-title">
+            <h2>第三步：地域筛选</h2>
+            <p>继续排除完全不想去的省份或城市；勾选省份会排除该省全部候选。</p>
+          </div>
+          <div class="actions span-6">
+            <button id="saveRegions">保存地域排除</button>
+            <button id="clearRegions">清除地域排除</button>
+          </div>
+          <div class="exclusion-grid">
+            <div class="exclude-panel">
+              <h3>排除省份</h3>
+              <div class="exclude-options" id="excludeProvinceOptions"></div>
+            </div>
+            <div class="exclude-panel">
+              <h3>排除城市</h3>
+              <div class="exclude-options" id="excludeCityOptions"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="summary" aria-label="查询统计">
+        <div class="metric"><strong id="planResultCount">0</strong><span>当前结果</span></div>
+        <div class="metric"><strong id="planDataCount">0</strong><span>专业底库</span></div>
+        <div class="metric"><strong id="planGroupCount">0</strong><span>涉及专业组</span></div>
+        <div class="metric"><strong id="planSchoolCount">0</strong><span>涉及学校</span></div>
+        <div class="metric"><strong id="planLanguageBlocked">0</strong><span>明确不招日语</span></div>
+        <div class="metric"><strong id="planCheckCount">0</strong><span>未匹配/需核验</span></div>
+      </section>
+
+      <section class="filter-trace" aria-label="筛选轨迹">
+        <div class="trace-step"><strong id="traceBase">0</strong><span>1. 招生计划底库</span></div>
+        <div class="trace-step"><strong id="traceScore">0</strong><span>2. 分数/位次匹配+待核</span></div>
+        <div class="trace-step"><strong id="traceMajor">0</strong><span>3. 专业关键词</span></div>
+        <div class="trace-step"><strong id="traceExclusion">0</strong><span>4. 排除专业组/专业</span></div>
+        <div class="trace-step"><strong id="traceRegion">0</strong><span>5. 地域排除</span></div>
+        <div class="trace-step"><strong id="traceFinal">0</strong><span>6. 偏好与硬条件后</span></div>
+      </section>
+
+      <section class="actions flow-export-actions" aria-label="导出筛选流程">
+        <button id="exportFlowReport">导出筛选流程与可选名单</button>
+      </section>
+
+      <section class="table-wrap" aria-label="招生计划查询结果">
+        <table class="compact-table screen-table">
+          <colgroup>
+            <col class="w-xl">
+            <col class="w-md">
+            <col class="w-sm">
+            <col class="w-sm">
+            <col class="w-lg">
+            <col class="w-sm">
+            <col class="w-md">
+            <col class="w-sm">
+            <col class="w-sm">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>操作</th>
+              <th><button class="sort-btn" type="button" onclick="setPlanColumnSort('school')">学校</button></th>
+              <th><button class="sort-btn" type="button" onclick="setPlanColumnSort('location')">所在地</button></th>
+              <th><button class="sort-btn" type="button" onclick="setPlanColumnSort('group')">专业组</button></th>
+              <th><button class="sort-btn" type="button" onclick="setPlanColumnSort('majorCode')">专业代码</button></th>
+              <th><button class="sort-btn" type="button" onclick="setPlanColumnSort('major')">专业</button></th>
+              <th><button class="sort-btn" type="button" onclick="setPlanColumnSort('score')">2025分</button></th>
+              <th><button class="sort-btn" type="button" onclick="setPlanColumnSort('rank')">2025位次</button></th>
+              <th><button class="sort-btn" type="button" onclick="setPlanColumnSort('tier')">档位</button></th>
+            </tr>
+          </thead>
+          <tbody id="planRows"></tbody>
+        </table>
+      </section>
+    </div>
+
+    <div id="fullPlanView" class="app-view">
+      <section class="query-grid" aria-label="招生计划全量查询">
+        <div>
+          <label for="fullSearchMode">查询方式</label>
+          <select id="fullSearchMode">
+            <option value="major">按专业关键词</option>
+            <option value="school">按学校名称</option>
+          </select>
+        </div>
+        <div class="span-2">
+          <label for="fullKeyword">关键词</label>
+          <input id="fullKeyword" placeholder="计算机 / 浙江工商大学">
+        </div>
+        <div>
+          <label for="fullCity">省份 / 城市</label>
+          <input id="fullCity" placeholder="浙江 / 杭州市 / 福建">
+        </div>
+        <div>
+          <label for="fullGroupFilter">专业组</label>
+          <input id="fullGroupFilter" placeholder="500 / 999">
+        </div>
+        <div>
+          <label for="fullBatch">批次</label>
+          <select id="fullBatch">
+            <option value="">全部</option>
+            <option value="本科批">本科批</option>
+            <option value="本科提前批">本科提前批</option>
+          </select>
+        </div>
+        <div class="actions span-2">
+          <label><input id="fullOnlySubject" type="checkbox" checked> 只看物化地可报</label>
+          <label><input id="fullHideLanguage" type="checkbox" checked> 隐藏明确不招日语</label>
+        </div>
+      </section>
+      <section class="summary" aria-label="全量查询统计">
+        <div class="metric"><strong id="fullResultCount">0</strong><span>当前结果</span></div>
+        <div class="metric"><strong id="fullDataCount">0</strong><span>专业底库</span></div>
+        <div class="metric"><strong id="fullGroupCount">0</strong><span>涉及专业组</span></div>
+        <div class="metric"><strong id="fullSchoolCount">0</strong><span>涉及学校</span></div>
+        <div class="metric"><strong id="fullLanguageBlocked">0</strong><span>明确不招日语</span></div>
+        <div class="metric"><strong id="fullShownCount">0</strong><span>显示前500条</span></div>
+      </section>
+      <section class="table-wrap" aria-label="招生计划全量结果">
+        <table class="compact-table">
+          <thead>
+            <tr>
+              <th>学校</th>
+              <th>所在地</th>
+              <th>专业组</th>
+              <th>选科</th>
+              <th>物化地</th>
+              <th>日语</th>
+              <th>专业代码</th>
+              <th>专业</th>
+              <th>学制</th>
+              <th>计划</th>
+              <th>学费</th>
+              <th>备注</th>
+            </tr>
+          </thead>
+          <tbody id="fullPlanRows"></tbody>
+        </table>
+      </section>
+    </div>
+
+    <div id="poolView" class="app-view">
+      <section class="summary" aria-label="备选池统计">
+        <div class="metric"><strong id="poolCount">0</strong><span>备选学校</span></div>
+        <div class="metric"><strong id="poolRushCount">0</strong><span>冲</span></div>
+        <div class="metric"><strong id="poolStableCount">0</strong><span>稳</span></div>
+        <div class="metric"><strong id="poolSafeCount">0</strong><span>保/垫底</span></div>
+        <div class="metric"><strong id="poolUnmatchedCount">0</strong><span>含未匹配</span></div>
+        <div class="metric"><strong id="manualScoreCount">0</strong><span>手动专业线</span></div>
+      </section>
+
+      <section class="actions flow-export-actions" aria-label="备选池操作">
+        <button id="openManualSchoolAdd">手动加入学校</button>
+      </section>
+
+      <section class="table-wrap" aria-label="学校备选池">
+        <table class="compact-table pool-table">
+          <colgroup>
+            <col style="width: 140px">
+            <col style="width: 240px">
+            <col style="width: 120px">
+            <col style="width: 150px">
+            <col style="width: 96px">
+            <col style="width: 126px">
+            <col style="width: 90px">
+            <col style="width: 90px">
+            <col>
+          </colgroup>
+          <thead>
+            <tr>
+              <th>展开</th>
+              <th><button class="sort-btn" type="button" onclick="setPoolColumnSort('school')">学校</button></th>
+              <th><button class="sort-btn" type="button" onclick="setPoolColumnSort('location')">所在地</button></th>
+              <th><button class="sort-btn" type="button" onclick="setPoolColumnSort('groups')">专业组</button></th>
+              <th><button class="sort-btn" type="button" onclick="setPoolColumnSort('score')">2025分</button></th>
+              <th><button class="sort-btn" type="button" onclick="setPoolColumnSort('rank')">2025位次</button></th>
+              <th><button class="sort-btn" type="button" onclick="setPoolColumnSort('plan')">2026计划</button></th>
+              <th><button class="sort-btn" type="button" onclick="setPoolColumnSort('majorCount')">专业数</button></th>
+              <th><button class="sort-btn" type="button" onclick="setPoolColumnSort('marked')">已标记专业</button></th>
+            </tr>
+          </thead>
+          <tbody id="schoolPoolRows"></tbody>
+        </table>
+      </section>
+
+      <section class="table-wrap" aria-label="已移出学校">
+        <table class="compact-table pool-table">
+          <thead>
+            <tr>
+              <th>状态</th>
+              <th>学校</th>
+              <th>所在地</th>
+              <th>专业组</th>
+              <th>2025分</th>
+              <th>2025位次</th>
+              <th>2026计划</th>
+              <th>专业数</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="removedSchoolPoolRows"></tbody>
+        </table>
+      </section>
+
+      <div id="manualSchoolModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-label="手动加入学校">
+        <div class="modal-panel">
+          <div class="modal-header">
+            <h2>手动加入学校</h2>
+            <button id="closeManualSchoolAdd" type="button">关闭</button>
+          </div>
+          <div class="form-grid">
+            <div class="span-3">
+              <label for="manualSchoolSearch">学校关键词</label>
+              <input id="manualSchoolSearch" placeholder="输入学校名或院校代码，例如 浙江工商大学 / 4286">
+            </div>
+            <div class="actions span-3">
+              <button id="runManualSchoolSearch" type="button">搜索</button>
+            </div>
+          </div>
+          <section class="table-wrap" aria-label="手动加入学校搜索结果">
+            <table class="compact-table">
+              <thead>
+                <tr>
+                  <th>学校</th>
+                  <th>所在地</th>
+                  <th>专业组</th>
+                  <th>专业数</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="manualSchoolSearchRows"></tbody>
+            </table>
+          </section>
+        </div>
+      </div>
+
+      <section class="form-grid" aria-label="手动补录2025专业分数线">
+        <div class="span-6">
+          <h2>手动补录 2025 专业分数线</h2>
+        </div>
+        <div>
+          <label for="manualSchoolCode">院校代码</label>
+          <input id="manualSchoolCode" placeholder="如 4286">
+        </div>
+        <div>
+          <label for="manualSchool">学校</label>
+          <input id="manualSchool" placeholder="如 浙江工商大学">
+        </div>
+        <div>
+          <label for="manualGroupCode">专业组</label>
+          <input id="manualGroupCode" placeholder="如 999">
+        </div>
+        <div>
+          <label for="manualMajorCode">专业代码</label>
+          <input id="manualMajorCode" placeholder="可空">
+        </div>
+        <div>
+          <label for="manualMajor">专业名称</label>
+          <input id="manualMajor" placeholder="如 金融学">
+        </div>
+        <div>
+          <label for="manualAdmissionType">招生类型</label>
+          <input id="manualAdmissionType" value="手动补录">
+        </div>
+        <div>
+          <label for="manualScore">2025最低分</label>
+          <input id="manualScore" type="number" min="0" max="750">
+        </div>
+        <div>
+          <label for="manualRank">2025最低位次</label>
+          <input id="manualRank" type="number" min="1">
+        </div>
+        <div class="span-3">
+          <label for="manualSource">来源 / 备注</label>
+          <input id="manualSource" placeholder="截图、网页、资料来源">
+        </div>
+        <div class="actions span-3">
+          <button id="saveManualScore">保存专业线</button>
+          <button id="clearManualScoreForm">清空补录表单</button>
+        </div>
+      </section>
+
+      <section class="table-wrap" aria-label="手动补录分数线列表">
+        <table class="compact-table">
+          <thead>
+            <tr>
+              <th>学校</th>
+              <th>专业组</th>
+              <th>专业代码</th>
+              <th>专业</th>
+              <th>2025分</th>
+              <th>2025位次</th>
+              <th>类型</th>
+              <th>来源</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="manualScoreRows"></tbody>
+        </table>
+      </section>
+    </div>
+
+    <div id="plannerView" class="app-view">
+    <section class="toolbar" aria-label="筛选与导入导出">
+      <div>
+        <label for="search">关键词</label>
+        <input id="search" placeholder="学校 / 专业 / 城市 / 备注">
+      </div>
+      <div>
+        <label for="filterTier">档位</label>
+        <select id="filterTier">
+          <option value="">全部</option>
+          <option value="冲">冲</option>
+          <option value="稳">稳</option>
+          <option value="保">保</option>
+          <option value="垫底">垫底</option>
+          <option value="未匹配">未匹配</option>
+          <option value="待定">待定</option>
+        </select>
+      </div>
+      <div>
+        <label for="filterProvince">地区</label>
+        <input id="filterProvince" placeholder="福建 / 广东 / 上海">
+      </div>
+      <div>
+        <label for="sortBy">排序</label>
+        <select id="sortBy">
+          <option value="order">志愿顺序</option>
+          <option value="rank2025">2025投档位次</option>
+          <option value="plan2026">2026计划数</option>
+          <option value="school">学校名称</option>
+        </select>
+      </div>
+      <div class="actions">
+        <button id="exportJson">导出 JSON</button>
+        <button id="exportCsv">导出 CSV</button>
+        <button id="exportShareSnapshot">导出分享快照</button>
+        <button id="importBtn">导入 JSON/CSV</button>
+        <input id="importFile" class="file-input" type="file" accept=".json,.csv,application/json,text/csv">
+      </div>
+      <div class="actions">
+        <button id="clearFilters">清除筛选</button>
+      </div>
+    </section>
+
+    <section class="summary" aria-label="统计">
+      <div class="metric"><strong id="countAll">0</strong><span>候选专业组</span></div>
+      <div class="metric"><strong id="countRush">0</strong><span>冲</span></div>
+      <div class="metric"><strong id="countStable">0</strong><span>稳</span></div>
+      <div class="metric"><strong id="countSafe">0</strong><span>保</span></div>
+      <div class="metric"><strong id="countFloor">0</strong><span>垫底</span></div>
+      <div class="metric"><strong id="countHardBlock">0</strong><span>硬条件不通过 / 待核</span></div>
+    </section>
+
+    <section id="finalChoiceBoard" class="final-board" aria-label="最终志愿梯度看板"></section>
+
+    <section class="form-grid" aria-label="新增或编辑候选专业组">
+      <input id="editId" type="hidden">
+      <div>
+        <label for="order">志愿序号</label>
+        <input id="order" type="number" min="1" max="50" placeholder="1-50">
+      </div>
+      <div>
+        <label for="tier">档位</label>
+        <select id="tier">
+          <option value="待定">待定</option>
+          <option value="冲">冲</option>
+          <option value="稳">稳</option>
+          <option value="保">保</option>
+          <option value="垫底">垫底</option>
+          <option value="未匹配">未匹配</option>
+        </select>
+      </div>
+      <div>
+        <label for="schoolCode">院校代码</label>
+        <input id="schoolCode" placeholder="如 1004">
+      </div>
+      <div>
+        <label for="school">学校</label>
+        <input id="school" placeholder="如 福建江夏学院">
+      </div>
+      <div>
+        <label for="groupCode">专业组</label>
+        <input id="groupCode" placeholder="如 500 / 999">
+      </div>
+      <div>
+        <label for="subjectReq">选科要求</label>
+        <input id="subjectReq" placeholder="不限 / 化学 / 政治">
+      </div>
+
+      <div>
+        <label for="subjectEligible">物化地选科</label>
+        <select id="subjectEligible">
+          <option value="待核">待核</option>
+          <option value="可报">可报</option>
+          <option value="不可报">不可报</option>
+        </select>
+      </div>
+      <div>
+        <label for="japaneseEligible">日语考生</label>
+        <select id="japaneseEligible">
+          <option value="待核">待核</option>
+          <option value="可报">可报</option>
+          <option value="不可报">不可报</option>
+        </select>
+      </div>
+      <div class="span-2">
+        <label for="languageReq">外语 / 口试要求</label>
+        <input id="languageReq" placeholder="不限 / 只招英语 / 英语口试 / 入学后英语教学">
+      </div>
+      <div>
+        <label for="hardStatus">硬条件结论</label>
+        <select id="hardStatus">
+          <option value="待核">待核</option>
+          <option value="通过">通过</option>
+          <option value="不通过">不通过</option>
+        </select>
+      </div>
+      <div>
+        <label for="hardReason">硬条件说明</label>
+        <input id="hardReason" placeholder="日语可报；物化地满足；或具体排除原因">
+      </div>
+
+      <div>
+        <label for="province">省份</label>
+        <input id="province" placeholder="福建">
+      </div>
+      <div>
+        <label for="city">城市</label>
+        <input id="city" placeholder="福州">
+      </div>
+      <div>
+        <label for="rank2025">2025投档最低位次</label>
+        <input id="rank2025" type="number" min="1" placeholder="如 75826">
+      </div>
+      <div>
+        <label for="score2025">2025投档最低分</label>
+        <input id="score2025" type="number" min="0" max="750" placeholder="可空">
+      </div>
+      <div>
+        <label for="avgScore2025">2025平均分</label>
+        <input id="avgScore2025" type="number" min="0" max="750" placeholder="省外小计划重点看">
+      </div>
+      <div>
+        <label for="avgRank2025">2025平均位次</label>
+        <input id="avgRank2025" type="number" min="1" placeholder="可空">
+      </div>
+      <div>
+        <label for="plan2026">2026组内计划数</label>
+        <input id="plan2026" type="number" min="0" placeholder="该专业组总计划">
+      </div>
+      <div>
+        <label for="tuition">学费</label>
+        <input id="tuition" placeholder="5460 / 15000 / 待定">
+      </div>
+
+      <div class="span-3">
+        <label for="majors">可报专业与计划</label>
+        <textarea id="majors" placeholder="001 计算机科学与技术 4人；002 数据科学与大数据技术 3人"></textarea>
+      </div>
+      <div class="span-3">
+        <label for="majorIntroLinks">专业介绍 / 学院链接</label>
+        <textarea id="majorIntroLinks" placeholder="计算机科学与技术 https://..."></textarea>
+      </div>
+      <div class="span-3">
+        <label for="limits">限制与风险</label>
+        <textarea id="limits" placeholder="色盲色弱限制 / 英语口试 / 单科成绩 / 面向地区 / 中外合作"></textarea>
+      </div>
+      <div class="span-3">
+        <label for="reason">判断依据</label>
+        <textarea id="reason" placeholder="2025位次、等位分、招生计划变化、专业热度"></textarea>
+      </div>
+      <div class="span-3">
+        <label for="sourceLinks">数据来源链接</label>
+        <textarea id="sourceLinks" placeholder="考试院投档表 / 学校招生网 / 阳光高考章程"></textarea>
+      </div>
+      <div class="span-3">
+        <label for="futureResearch">后续研究</label>
+        <textarea id="futureResearch" placeholder="就业去向 / 是否建议考研 / 转专业 / 保研 / 培养校区"></textarea>
+      </div>
+      <div class="span-3">
+        <label for="notes">备注</label>
+        <textarea id="notes" placeholder="家长意见 / 学生偏好 / 后续需核验"></textarea>
+      </div>
+
+      <div class="span-6 actions">
+        <button class="primary" id="saveEntry">保存候选项</button>
+        <button id="resetForm">清空表单</button>
+      </div>
+    </section>
+
+    <section class="table-wrap" aria-label="候选专业组列表">
+      <table>
+        <thead>
+          <tr>
+            <th>序号</th>
+            <th>档位</th>
+            <th>院校代码</th>
+            <th>学校</th>
+            <th>专业组</th>
+            <th>选科</th>
+            <th>物化地</th>
+            <th>日语</th>
+            <th>外语要求</th>
+            <th>硬条件</th>
+            <th>硬条件说明</th>
+            <th>地区</th>
+            <th>2025位次</th>
+            <th>2025分</th>
+            <th>2025均分</th>
+            <th>2025均位次</th>
+            <th>2026计划</th>
+            <th>学费</th>
+            <th>可报专业</th>
+            <th>专业介绍</th>
+            <th>限制与风险</th>
+            <th>判断依据</th>
+            <th>数据来源</th>
+            <th>后续研究</th>
+            <th>备注</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </section>
+    </div>
+  </main>
+
+  <script src="data/processed/2026_plan_majors.js"></script>
+  <script src="data/processed/2025_scores_physics_undergrad.js"></script>
+  <script src="data/processed/2025_rank_table_physics_undergrad.js"></script>
+  <script>
+    const storageKey = "fj_gaokao_choices_v1";
+    const bandSettingsKey = "fj_gaokao_band_settings_v1";
+    const exclusionSettingsKey = "fj_gaokao_exclusion_settings_v1";
+    const regionSettingsKey = "fj_gaokao_region_settings_v1";
+    const schoolPoolKey = "fj_gaokao_school_pool_v1";
+    const manualScoreKey = "fj_gaokao_manual_scores_2025_v1";
+    const poolExpandedKey = "fj_gaokao_pool_expanded_v1";
+    const fields = [
+      "order", "tier", "schoolCode", "school", "groupCode", "subjectReq",
+      "subjectEligible", "japaneseEligible", "languageReq", "hardStatus", "hardReason",
+      "province", "city", "rank2025", "score2025", "avgScore2025", "avgRank2025", "plan2026", "tuition",
+      "majors", "majorIntroLinks", "limits", "reason", "sourceLinks", "futureResearch", "notes"
+    ];
+    let entries = loadEntries();
+    let schoolPool = loadSchoolPool();
+    let manualScores = loadManualScores();
+    let expandedPoolSchools = loadExpandedPoolSchools();
+
+    const $ = (id) => document.getElementById(id);
+    const planMajors = Array.isArray(window.PLAN_MAJORS) ? window.PLAN_MAJORS : [];
+    const scores2025 = Array.isArray(window.SCORES_2025) ? window.SCORES_2025 : [];
+    const rankTable2025 = Array.isArray(window.RANK_TABLE_2025) ? window.RANK_TABLE_2025 : [];
+    const scoreMajorExactIndex = new Map();
+    const scoreMajorNameIndex = new Map();
+    const excludedGroups = new Set();
+    const excludedMajors = new Set();
+    const excludedProvinces = new Set();
+    const excludedCities = new Set();
+    let currentPlanDisplayRows = [];
+    let currentPoolDetailRows = [];
+    let manualSchoolSearchResults = [];
+    let planColumnSort = { key: "", direction: 1 };
+    let poolColumnSort = { key: "", direction: 1 };
+
+    scores2025.forEach((score) => {
+      const group = normalizeGroup(score.group_code);
+      const names = new Set([cleanDisplaySchool(score.school_name), baseSchoolName(score.school_name)]);
+      const majorName = normalizeMajorName(score.major_name);
+      const exactKeys = [
+        `${score.school_code || ""}|${group}|name:${majorName}`
+      ];
+      exactKeys.forEach((key) => {
+        if (!key.endsWith("code:") && !key.endsWith("name:")) {
+          if (!scoreMajorExactIndex.has(key)) scoreMajorExactIndex.set(key, []);
+          scoreMajorExactIndex.get(key).push(score);
+        }
+      });
+      names.forEach((name) => {
+        if (!name) return;
+        [
+          `${name}|${group}|name:${majorName}`
+        ].forEach((key) => {
+          if (!key.endsWith("code:") && !key.endsWith("name:")) {
+            if (!scoreMajorNameIndex.has(key)) scoreMajorNameIndex.set(key, []);
+            scoreMajorNameIndex.get(key).push(score);
+          }
+        });
+      });
+    });
+
+    function loadEntries() {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveEntries() {
+      localStorage.setItem(storageKey, JSON.stringify(entries));
+    }
+
+    function loadSchoolPool() {
+      try {
+        return JSON.parse(localStorage.getItem(schoolPoolKey)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveSchoolPool() {
+      localStorage.setItem(schoolPoolKey, JSON.stringify(schoolPool));
+    }
+
+    function loadManualScores() {
+      try {
+        return JSON.parse(localStorage.getItem(manualScoreKey)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveManualScores() {
+      localStorage.setItem(manualScoreKey, JSON.stringify(manualScores));
+    }
+
+    function loadExpandedPoolSchools() {
+      try {
+        return new Set(JSON.parse(localStorage.getItem(poolExpandedKey)) || []);
+      } catch {
+        return new Set();
+      }
+    }
+
+    function saveExpandedPoolSchools() {
+      localStorage.setItem(poolExpandedKey, JSON.stringify(Array.from(expandedPoolSchools)));
+    }
+
+    function valueOf(id) {
+      return $(id).value.trim();
+    }
+
+    function saveBandSettings() {
+      const settings = {
+        currentScore2026: valueOf("currentScore2026"),
+        equivScore2025: valueOf("equivScore2025"),
+        currentRank2026: valueOf("currentRank2026"),
+        rankWindowLow: valueOf("rankWindowLow"),
+        rankWindowHigh: valueOf("rankWindowHigh"),
+        rushMin: valueOf("rushMin"),
+        stableMin: valueOf("stableMin"),
+        safeMin: valueOf("safeMin"),
+        floorMin: valueOf("floorMin")
+      };
+      localStorage.setItem(bandSettingsKey, JSON.stringify(settings));
+    }
+
+    function loadBandSettings() {
+      try {
+        const settings = JSON.parse(localStorage.getItem(bandSettingsKey));
+        if (!settings) return false;
+        Object.entries(settings).forEach(([id, value]) => {
+          if ($(id) && value !== undefined) $(id).value = value;
+        });
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    function saveExclusionSettings() {
+      localStorage.setItem(exclusionSettingsKey, JSON.stringify({
+        groups: Array.from(excludedGroups),
+        majors: Array.from(excludedMajors)
+      }));
+    }
+
+    function loadExclusionSettings() {
+      try {
+        const settings = JSON.parse(localStorage.getItem(exclusionSettingsKey));
+        if (!settings) return;
+        (settings.groups || []).forEach((key) => excludedGroups.add(key));
+        (settings.majors || []).forEach((key) => excludedMajors.add(key));
+      } catch {
+        // Ignore corrupt local settings.
+      }
+    }
+
+    function saveRegionSettings() {
+      localStorage.setItem(regionSettingsKey, JSON.stringify({
+        provinces: Array.from(excludedProvinces),
+        cities: Array.from(excludedCities)
+      }));
+    }
+
+    function loadRegionSettings() {
+      try {
+        const settings = JSON.parse(localStorage.getItem(regionSettingsKey));
+        if (!settings) return;
+        (settings.provinces || []).forEach((key) => excludedProvinces.add(key));
+        (settings.cities || []).forEach((key) => excludedCities.add(key));
+      } catch {
+        // Ignore corrupt local settings.
+      }
+    }
+
+    function numberOrBlank(id) {
+      const value = valueOf(id);
+      return value === "" ? "" : Number(value);
+    }
+
+    function formToEntry() {
+      return {
+        id: valueOf("editId") || crypto.randomUUID(),
+        order: numberOrBlank("order"),
+        tier: valueOf("tier") || "待定",
+        schoolCode: valueOf("schoolCode"),
+        school: valueOf("school"),
+        groupCode: valueOf("groupCode"),
+        subjectReq: valueOf("subjectReq"),
+        subjectEligible: valueOf("subjectEligible") || "待核",
+        japaneseEligible: valueOf("japaneseEligible") || "待核",
+        languageReq: valueOf("languageReq"),
+        hardStatus: valueOf("hardStatus") || "待核",
+        hardReason: valueOf("hardReason"),
+        province: valueOf("province"),
+        city: valueOf("city"),
+        rank2025: numberOrBlank("rank2025"),
+        score2025: numberOrBlank("score2025"),
+        avgScore2025: numberOrBlank("avgScore2025"),
+        avgRank2025: numberOrBlank("avgRank2025"),
+        plan2026: numberOrBlank("plan2026"),
+        tuition: valueOf("tuition"),
+        majors: valueOf("majors"),
+        majorIntroLinks: valueOf("majorIntroLinks"),
+        limits: valueOf("limits"),
+        reason: valueOf("reason"),
+        sourceLinks: valueOf("sourceLinks"),
+        futureResearch: valueOf("futureResearch"),
+        notes: valueOf("notes")
+      };
+    }
+
+    function resetForm() {
+      $("editId").value = "";
+      fields.forEach((field) => {
+        if (field === "tier") {
+          $(field).value = "待定";
+        } else if (["subjectEligible", "japaneseEligible", "hardStatus"].includes(field)) {
+          $(field).value = "待核";
+        } else {
+          $(field).value = "";
+        }
+      });
+      $("saveEntry").textContent = "保存候选项";
+    }
+
+    function editEntry(id) {
+      const entry = entries.find((item) => item.id === id);
+      if (!entry) return;
+      $("editId").value = entry.id;
+      fields.forEach((field) => {
+        $(field).value = entry[field] ?? "";
+      });
+      $("saveEntry").textContent = "更新候选项";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function deleteEntry(id) {
+      if (!confirm("删除这个候选专业组？")) return;
+      entries = entries.filter((item) => item.id !== id);
+      saveEntries();
+      render();
+    }
+
+    function filteredEntries() {
+      const keyword = valueOf("search").toLowerCase();
+      const tier = valueOf("filterTier");
+      const province = valueOf("filterProvince").toLowerCase();
+      const sortBy = valueOf("sortBy");
+
+      const result = entries.filter((entry) => {
+        const haystack = [
+          entry.school, entry.schoolCode, entry.groupCode, entry.subjectReq,
+          entry.subjectEligible, entry.japaneseEligible, entry.languageReq, entry.hardStatus, entry.hardReason,
+          entry.province, entry.city, entry.majors, entry.majorIntroLinks, entry.limits,
+          entry.reason, entry.sourceLinks, entry.futureResearch, entry.notes
+        ].join(" ").toLowerCase();
+        const keywordOk = !keyword || haystack.includes(keyword);
+        const tierOk = !tier || entry.tier === tier;
+        const provinceOk = !province || `${entry.province || ""}${entry.city || ""}`.toLowerCase().includes(province);
+        return keywordOk && tierOk && provinceOk;
+      });
+
+      result.sort((a, b) => {
+        if (sortBy === "rank2025") return numericSort(a.rank2025, b.rank2025);
+        if (sortBy === "plan2026") return numericSort(b.plan2026, a.plan2026);
+        if (sortBy === "school") return String(a.school || "").localeCompare(String(b.school || ""), "zh-CN");
+        return numericSort(a.order, b.order) || String(a.school || "").localeCompare(String(b.school || ""), "zh-CN");
+      });
+
+      return result;
+    }
+
+    function numericSort(a, b) {
+      const aa = a === "" || a === undefined ? Number.POSITIVE_INFINITY : Number(a);
+      const bb = b === "" || b === undefined ? Number.POSITIVE_INFINITY : Number(b);
+      return aa - bb;
+    }
+
+    function textSort(a, b) {
+      return String(a ?? "").localeCompare(String(b ?? ""), "zh-CN", { numeric: true });
+    }
+
+    function compareSortValues(a, b) {
+      const aBlank = a === "" || a === null || a === undefined;
+      const bBlank = b === "" || b === null || b === undefined;
+      if (aBlank && bBlank) return 0;
+      if (aBlank) return 1;
+      if (bBlank) return -1;
+      const an = Number(a);
+      const bn = Number(b);
+      if (Number.isFinite(an) && Number.isFinite(bn)) return an - bn;
+      return textSort(a, b);
+    }
+
+    function toggleSortState(state, key) {
+      if (state.key === key) {
+        state.direction *= -1;
+      } else {
+        state.key = key;
+        state.direction = 1;
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;")
+        .replaceAll("\n", "<br>");
+    }
+
+    function linkify(value) {
+      const text = String(value ?? "");
+      if (!text.trim()) return "";
+      const escaped = escapeHtml(text);
+      return escaped.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+    }
+
+    function foldedNote(value) {
+      const text = String(value ?? "").trim();
+      if (!text) return "";
+      if (text.length <= 24) return `<span class="truncate">${escapeHtml(text)}</span>`;
+      return `<details class="folded-note"><summary>查看备注</summary><div>${escapeHtml(text)}</div></details>`;
+    }
+
+    function cleanDisplaySchool(value) {
+      let text = String(value ?? "").replace(/\s+/g, " ").trim();
+      text = text.replace(/^[\s、。:：;；,\-\/0-9A-Za-z+≥‰《》]+(?=[\u4e00-\u9fa5])/g, "").trim();
+      const match = text.match(/([\u4e00-\u9fa5A-Za-z0-9()（）·]+(?:大学|学院|学校|职业技术大学)(?:\s+(?:组\d+|高校专项|地方专项|中外合作|闽台合作|面向[^ ]+|男|女|[0-9A-Za-z]+))*)$/);
+      if (match) text = match[1];
+      return text.replace(/^[、。:：;；,\-\s]+/, "").trim();
+    }
+
+    function baseSchoolName(value) {
+      return cleanDisplaySchool(value)
+        .replace(/（[^）]*(中外合作|闽台合作|地方专项|高校专项|面向[^）]+)[^）]*）/g, "")
+        .replace(/\([^)]*(中外合作|闽台合作|地方专项|高校专项|面向[^)]+)[^)]*\)/g, "")
+        .trim();
+    }
+
+    function normalizeGroup(value) {
+      return String(value ?? "").replace(/[（）()]/g, "").trim();
+    }
+
+    function normalizeMajorCode(value) {
+      const text = String(value ?? "").trim();
+      return /^\d{1,2}$/.test(text) ? text.padStart(3, "0") : text;
+    }
+
+    function normalizeMajorName(value) {
+      return String(value ?? "")
+        .replace(/\s+/g, "")
+        .replace(/[（）()，,。；;：:、\-]/g, "")
+        .trim();
+    }
+
+    function scoreNumber(value) {
+      const num = Number(value);
+      return Number.isFinite(num) ? num : null;
+    }
+
+    function splitKeywords(value) {
+      return String(value ?? "")
+        .toLowerCase()
+        .split(/[\s,，、;；/|]+/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
+
+    function rankLookup2025(rankValue) {
+      const rank = Math.round(Number(rankValue));
+      if (!Number.isFinite(rank) || !rankTable2025.length) return null;
+      const exact = rankTable2025.find((row) => rank >= Number(row.rank_low) && rank <= Number(row.rank_high));
+      if (exact) return exact;
+      return rankTable2025.find((row) => Number(row.cumulative) >= rank) || null;
+    }
+
+    function scoreLookup2025(scoreValue) {
+      let score = Math.round(Number(scoreValue));
+      if (!Number.isFinite(score) || !rankTable2025.length) return null;
+      if (score < 441) score = 441;
+      return rankTable2025.find((row) => Number(row.score) === score) || null;
+    }
+
+    function updateTierRankRefs() {
+      [
+        ["rushMin", "rushRankRef"],
+        ["stableMin", "stableRankRef"],
+        ["safeMin", "safeRankRef"],
+        ["floorMin", "floorRankRef"]
+      ].forEach(([inputId, refId]) => {
+        const range = parseRangeInput(inputId, 0, 0);
+        const highScoreRow = scoreLookup2025(range.max);
+        const lowScoreRow = scoreLookup2025(range.min);
+        if (!highScoreRow || !lowScoreRow) {
+          $(refId).textContent = "";
+          return;
+        }
+        $(refId).textContent = `参考位次约 ${highScoreRow.rank_low}-${lowScoreRow.rank_high}`;
+      });
+    }
+
+    function groupKey(row) {
+      return `${row.schoolCode || row.school || ""}|${normalizeGroup(row.groupCode)}`;
+    }
+
+    function majorKey(row) {
+      return normalizeMajorName(row.major);
+    }
+
+    function applyExclusionFilters(rows) {
+      return rows.filter((row) => !excludedGroups.has(groupKey(row)) && !excludedMajors.has(majorKey(row)));
+    }
+
+    function regionProvinceKey(row) {
+      return row.province || "未知省份";
+    }
+
+    function regionCityKey(row) {
+      return `${row.province || "未知省份"}|${row.city || "未知城市"}`;
+    }
+
+    function applyRegionFilters(rows) {
+      return rows.filter((row) => !excludedProvinces.has(regionProvinceKey(row)) && !excludedCities.has(regionCityKey(row)));
+    }
+
+    function formatRange(min, max) {
+      const low = Math.min(min, max);
+      const high = Math.max(min, max);
+      return `${low}-${high}`;
+    }
+
+    function applyRankRuleBands() {
+      const currentRank = scoreNumber(valueOf("currentRank2026")) || 75826;
+      const current = rankLookup2025(currentRank);
+      const rush = rankLookup2025(currentRank * 0.9);
+      const stable = rankLookup2025(currentRank * 1.1);
+      const safe = rankLookup2025(currentRank * 1.3);
+      if (!current || !rush || !stable || !safe) return;
+
+      const currentScore = Number(current.score);
+      const rushScore = Number(rush.score);
+      const stableScore = Number(stable.score);
+      const safeScore = Number(safe.score);
+      const controlLine = 441;
+
+      $("equivScore2025").value = String(currentScore);
+      $("rankWindowLow").value = String(rush.rank_low);
+      $("rankWindowHigh").value = String(safe.rank_high);
+      $("rushMin").value = formatRange(stableScore + 7, rushScore);
+      $("stableMin").value = formatRange(stableScore, stableScore + 7);
+      $("safeMin").value = formatRange(safeScore, stableScore);
+      $("floorMin").value = formatRange(controlLine - 1, safeScore);
+      $("rankRuleHint").textContent =
+        `按 ${Math.round(currentRank)} 位计算：冲 ${Math.round(currentRank * 0.9)} 位约 ${rushScore} 分；` +
+        `稳 ${Math.round(currentRank * 1.1)} 位约 ${stableScore} 分；` +
+        `保底 ${Math.round(currentRank * 1.3)} 位约 ${safeScore} 分。` +
+        ` 位次窗口按同分区间设为 ${rush.rank_low}-${safe.rank_high}。`;
+    }
+
+    function parseRangeInput(id, fallbackMin, fallbackMax) {
+      const text = valueOf(id);
+      const match = text.match(/(\d+)\s*[-~—至]\s*(\d+)/);
+      if (!match) return { min: fallbackMin, max: fallbackMax };
+      const a = Number(match[1]);
+      const b = Number(match[2]);
+      return { min: Math.min(a, b), max: Math.max(a, b) };
+    }
+
+    function tierRanges() {
+      return {
+        rush: parseRangeInput("rushMin", 490, 501),
+        stable: parseRangeInput("stableMin", 483, 490),
+        safe: parseRangeInput("safeMin", 465, 483),
+        floor: parseRangeInput("floorMin", 440, 465)
+      };
+    }
+
+    function chooseBestScore(matches, row) {
+      if (!matches || !matches.length) return null;
+      const school = String(row.school || "");
+      const remark = `${row.school || ""} ${row.remarks || ""}`;
+      const isCoop = school.includes("中外合作") || remark.includes("中外合作");
+      const isMintai = school.includes("闽台") || remark.includes("闽台");
+      const preferred = matches.find((item) => {
+        const type = item.admission_type || "";
+        if (isCoop) return type.includes("中外");
+        if (isMintai) return type.includes("闽台");
+        return type === "普通类";
+      });
+      return preferred || matches[0];
+    }
+
+    function matchScore2025(row) {
+      const manual = matchManualScore2025(row);
+      if (manual) return { score: manual, status: "手动补录" };
+      const group = normalizeGroup(row.groupCode);
+      const majorName = normalizeMajorName(row.major);
+      const exactByName = chooseBestScore(scoreMajorExactIndex.get(`${row.schoolCode || ""}|${group}|name:${majorName}`), row);
+      if (exactByName) return { score: exactByName, status: "专业精确匹配" };
+      const name = baseSchoolName(row.school);
+      const byNameAndMajor = chooseBestScore(scoreMajorNameIndex.get(`${name}|${group}|name:${majorName}`), row);
+      if (byNameAndMajor) return { score: byNameAndMajor, status: "学校名称+专业匹配" };
+      return { score: null, status: "未匹配" };
+    }
+
+    function matchManualScore2025(row) {
+      const group = normalizeGroup(row.groupCode);
+      const majorName = normalizeMajorName(row.major);
+      const majorCode = normalizeMajorCode(row.majorCode);
+      const schoolName = baseSchoolName(row.school);
+      return manualScores.find((score) => {
+        const codeOk = score.school_code && row.schoolCode && String(score.school_code) === String(row.schoolCode);
+        const nameOk = score.school_name && baseSchoolName(score.school_name) === schoolName;
+        const groupOk = normalizeGroup(score.group_code) === group;
+        const majorCodeOk = score.major_code && majorCode && normalizeMajorCode(score.major_code) === majorCode;
+        const majorNameOk = score.major_name && normalizeMajorName(score.major_name) === majorName;
+        return (codeOk || nameOk) && groupOk && (majorCodeOk || majorNameOk);
+      }) || null;
+    }
+
+    function autoTier(score) {
+      const value = scoreNumber(score && score.min_score_2025);
+      if (value === null) return "未匹配";
+      const ranges = tierRanges();
+      if (value >= ranges.rush.min && value <= ranges.rush.max) return "冲";
+      if (value >= ranges.stable.min && value <= ranges.stable.max) return "稳";
+      if (value >= ranges.safe.min && value <= ranges.safe.max) return "保";
+      if (value >= ranges.floor.min && value <= ranges.floor.max) return "垫底";
+      return "超范围";
+    }
+
+    function tierOrder(tier) {
+      return { "冲": 1, "稳": 2, "保": 3, "垫底": 4, "超范围": 5, "未匹配": 6 }[tier] || 7;
+    }
+
+    function preferenceType(row) {
+      const text = `${row.major || ""} ${row.remarks || ""}`;
+      const geo = /地理|地理信息|人文地理|自然地理|测绘|遥感|地理空间|城乡规划|资源环境|地质|地球信息|土地资源/.test(text);
+      const engineering = /计算机|软件|网络|数据|人工智能|电子|通信|信息|自动化|电气|机械|智能制造|机器人工程|物联网|集成电路|光电|能源|土木|材料|化工|车辆|交通|测控|工程/.test(text);
+      if (geo) return "geo";
+      if (engineering) return "engineering";
+      return "";
+    }
+
+    function ownershipType(row) {
+      const text = `${row.school || ""} ${row.remarks || ""}`;
+      if (text.includes("中外合作")) return "中外合作";
+      return row.ownership || "";
+    }
+
+    function isFuzhouOpportunity(row) {
+      const text = `${row.province || ""} ${row.city || ""} ${row.school || ""} ${row.remarks || ""}`;
+      return text.includes("福州") || text.includes("面向福州");
+    }
+
+    function tierClass(tier) {
+      if (tier === "冲") return "rush";
+      if (tier === "稳") return "stable";
+      if (tier === "保") return "safe";
+      if (tier === "垫底") return "pass";
+      if (tier === "未匹配" || tier === "超范围") return "warn";
+      return "";
+    }
+
+    function statusClass(status) {
+      if (status === "通过" || status === "可报") return "pass";
+      if (status === "不通过" || status === "不可报") return "fail";
+      return "warn";
+    }
+
+    function switchView(viewId) {
+      document.querySelectorAll(".app-view").forEach((view) => {
+        view.classList.toggle("active", view.id === viewId);
+      });
+      document.querySelectorAll(".tab-btn").forEach((button) => {
+        button.classList.toggle("active", button.dataset.view === viewId);
+      });
+    }
+
+    function enrichPlanRow(row) {
+      const matched = matchScore2025(row);
+      const tier = autoTier(matched.score);
+      return {
+        ...row,
+        score2025: matched.score,
+        matchStatus: matched.status,
+        autoTier: tier,
+        preferenceType: preferenceType(row),
+        ownershipType: ownershipType(row),
+        fuzhouOpportunity: isFuzhouOpportunity(row)
+      };
+    }
+
+    function planPipeline() {
+      const keywordMode = valueOf("planKeywordMode");
+      const majorTerms = splitKeywords(valueOf("planKeyword"));
+      const tierFilter = valueOf("planTierFilter");
+      const preference = valueOf("planPreference");
+      const ownership = valueOf("planOwnership");
+      const onlySubject = $("onlySubjectEligible").checked;
+      const hideLanguage = $("hideLanguageBlocked").checked;
+      const onlyFuzhou = $("onlyFuzhouOpportunity").checked;
+      const onlyRank = $("onlyRankWindow").checked;
+      const keepUnmatched = $("keepUnmatchedScores").checked;
+      const currentRank = scoreNumber(valueOf("currentRank2026")) || 75826;
+      const rankLow = scoreNumber(valueOf("rankWindowLow"));
+      const rankHigh = scoreNumber(valueOf("rankWindowHigh"));
+
+      const enriched = planMajors.map(enrichPlanRow);
+
+      const tierOk = (row) => !tierFilter ||
+        (tierFilter === "range" && ["冲", "稳", "保", "垫底"].includes(row.autoTier)) ||
+        (tierFilter === "稳保垫" && ["稳", "保", "垫底"].includes(row.autoTier)) ||
+        row.autoTier === tierFilter;
+      const scoreRows = enriched.filter((row) => {
+        if (keepUnmatched && row.autoTier === "未匹配") return true;
+        const rank = scoreNumber(row.score2025 && row.score2025.min_rank_2025);
+        const low = rankLow === null ? Math.max(1, currentRank - 10000) : rankLow;
+        const high = rankHigh === null ? currentRank + 20000 : rankHigh;
+        return tierOk(row) && (!onlyRank || (rank !== null && rank >= low && rank <= high));
+      });
+      const majorRows = scoreRows.filter((row) => {
+        const majorTarget = `${row.major || ""} ${row.remarks || ""}`.toLowerCase();
+        const hasMajorTerm = majorTerms.some((term) => majorTarget.includes(term));
+        return !majorTerms.length || (keywordMode === "exclude" ? !hasMajorTerm : hasMajorTerm);
+      });
+      const exclusionRows = applyExclusionFilters(majorRows);
+      const regionRows = applyRegionFilters(exclusionRows);
+      const finalRows = regionRows.filter((row) => {
+        const subjectOk = !onlySubject || row.subjectEligible === "可报";
+        const languageOk = !hideLanguage || row.japaneseEligible !== "不可报";
+        const preferenceOk = !preference || row.preferenceType === preference;
+        const ownershipOk = !ownership || row.ownershipType.includes(ownership);
+        const fuzhouOk = !onlyFuzhou || row.fuzhouOpportunity;
+        return subjectOk && languageOk && preferenceOk && ownershipOk && fuzhouOk;
+      });
+      return { enriched, scoreRows, majorRows, exclusionRows, regionRows, finalRows };
+    }
+
+    function sortPlanRows(results) {
+      const sortBy = valueOf("planSort");
+      results.sort((a, b) => {
+        if (sortBy === "tier") return tierOrder(a.autoTier) - tierOrder(b.autoTier) ||
+          numericSort(a.score2025 && a.score2025.min_rank_2025, b.score2025 && b.score2025.min_rank_2025);
+        if (sortBy === "score") return numericSort(b.score2025 && b.score2025.min_score_2025, a.score2025 && a.score2025.min_score_2025);
+        if (sortBy === "rank") return numericSort(a.score2025 && a.score2025.min_rank_2025, b.score2025 && b.score2025.min_rank_2025);
+        if (sortBy === "plan") return numericSort(b.plan2026, a.plan2026);
+        if (sortBy === "major") return String(a.major || "").localeCompare(String(b.major || ""), "zh-CN");
+        return String(a.school || "").localeCompare(String(b.school || ""), "zh-CN") ||
+          String(a.groupCode || "").localeCompare(String(b.groupCode || ""), "zh-CN") ||
+          String(a.majorCode || "").localeCompare(String(b.majorCode || ""), "zh-CN");
+      });
+      return results;
+    }
+
+    function planSearchResults(includeExclusions = true) {
+      const pipeline = planPipeline();
+      return sortPlanRows([...(includeExclusions ? pipeline.finalRows : pipeline.majorRows)]);
+    }
+
+    function planColumnValue(row, key) {
+      if (key === "school") return `${row.schoolCode || ""} ${cleanDisplaySchool(row.school)}`;
+      if (key === "location") return `${row.province || ""} ${row.city || ""}`;
+      if (key === "group") return normalizeGroup(row.groupCode);
+      if (key === "majorCode") return normalizeMajorCode(row.majorCode);
+      if (key === "major") return row.major || "";
+      if (key === "score") return row.score2025 && row.score2025.min_score_2025;
+      if (key === "rank") return row.score2025 && row.score2025.min_rank_2025;
+      if (key === "tier") return tierOrder(row.autoTier);
+      return "";
+    }
+
+    function sortPlanTableRows(rows) {
+      if (!planColumnSort.key) return rows;
+      return rows.sort((a, b) => planColumnSort.direction * (
+        compareSortValues(planColumnValue(a, planColumnSort.key), planColumnValue(b, planColumnSort.key)) ||
+        textSort(cleanDisplaySchool(a.school), cleanDisplaySchool(b.school)) ||
+        textSort(a.major, b.major)
+      ));
+    }
+
+    function setPlanColumnSort(key) {
+      toggleSortState(planColumnSort, key);
+      renderPlanSearch();
+    }
+
+    function renderExclusionOptions(rows) {
+      const groups = new Map();
+      const majors = new Map();
+      rows.forEach((row) => {
+        const gKey = groupKey(row);
+        const g = groups.get(gKey) || { row, count: 0, majors: [] };
+        g.count += 1;
+        if (g.majors.length < 4 && row.major) g.majors.push(row.major);
+        groups.set(gKey, g);
+        const mKey = majorKey(row);
+        const major = majors.get(mKey) || { row, count: 0, schools: new Set() };
+        major.count += 1;
+        major.schools.add(row.school);
+        majors.set(mKey, major);
+      });
+
+      const groupItems = Array.from(groups.entries()).slice(0, 80);
+      const majorItems = Array.from(majors.entries()).slice(0, 120);
+      $("excludeGroupOptions").innerHTML = groupItems.length ? groupItems.map(([key, item]) => `
+        <label class="exclude-option">
+          <input type="checkbox" data-exclude-type="group" data-key="${escapeHtml(encodeURIComponent(key))}" ${excludedGroups.has(key) ? "checked" : ""}>
+          <span>${escapeHtml(item.row.groupCode)}<br><span class="muted">${escapeHtml(item.majors.join("、"))}${item.count > item.majors.length ? "…" : ""}</span></span>
+        </label>
+      `).join("") : `<span class="muted">当前条件下没有可排除的专业组。</span>`;
+      $("excludeMajorOptions").innerHTML = majorItems.length ? majorItems.map(([key, item]) => `
+        <label class="exclude-option">
+          <input type="checkbox" data-exclude-type="major" data-key="${escapeHtml(encodeURIComponent(key))}" ${excludedMajors.has(key) ? "checked" : ""}>
+          <span>${escapeHtml(item.row.major)}<br><span class="muted">${item.schools.size} 所学校，${item.count} 条专业记录</span></span>
+        </label>
+      `).join("") : `<span class="muted">当前条件下没有可排除的专业。</span>`;
+
+      document.querySelectorAll("[data-exclude-type]").forEach((input) => {
+        input.addEventListener("change", (event) => {
+          const target = event.currentTarget;
+          const key = decodeURIComponent(target.dataset.key || "");
+          const set = target.dataset.excludeType === "group" ? excludedGroups : excludedMajors;
+          if (target.checked) {
+            set.add(key);
+          } else {
+            set.delete(key);
+          }
+          renderPlanSearch();
+        });
+      });
+    }
+
+    function renderRegionOptions(rows) {
+      const provinces = new Map();
+      const cities = new Map();
+      rows.forEach((row) => {
+        const pKey = regionProvinceKey(row);
+        const province = provinces.get(pKey) || { count: 0, cities: new Set() };
+        province.count += 1;
+        province.cities.add(row.city || "未知城市");
+        provinces.set(pKey, province);
+
+        const cKey = regionCityKey(row);
+        const city = cities.get(cKey) || { province: row.province || "未知省份", city: row.city || "未知城市", count: 0 };
+        city.count += 1;
+        cities.set(cKey, city);
+      });
+
+      const provinceItems = Array.from(provinces.entries()).sort((a, b) => b[1].count - a[1].count).slice(0, 80);
+      const cityItems = Array.from(cities.entries()).sort((a, b) => b[1].count - a[1].count).slice(0, 120);
+      $("excludeProvinceOptions").innerHTML = provinceItems.length ? provinceItems.map(([key, item]) => `
+        <label class="exclude-option">
+          <input type="checkbox" data-region-type="province" data-key="${escapeHtml(encodeURIComponent(key))}" ${excludedProvinces.has(key) ? "checked" : ""}>
+          <span>${escapeHtml(key)}<br><span class="muted">${item.cities.size} 个城市，${item.count} 条专业记录</span></span>
+        </label>
+      `).join("") : `<span class="muted">当前条件下没有可排除的省份。</span>`;
+      $("excludeCityOptions").innerHTML = cityItems.length ? cityItems.map(([key, item]) => `
+        <label class="exclude-option">
+          <input type="checkbox" data-region-type="city" data-key="${escapeHtml(encodeURIComponent(key))}" ${excludedCities.has(key) ? "checked" : ""}>
+          <span>${escapeHtml(item.city)}<br><span class="muted">${escapeHtml(item.province)}，${item.count} 条专业记录</span></span>
+        </label>
+      `).join("") : `<span class="muted">当前条件下没有可排除的城市。</span>`;
+
+      document.querySelectorAll("[data-region-type]").forEach((input) => {
+        input.addEventListener("change", (event) => {
+          const target = event.currentTarget;
+          const key = decodeURIComponent(target.dataset.key || "");
+          const set = target.dataset.regionType === "province" ? excludedProvinces : excludedCities;
+          if (target.checked) {
+            set.add(key);
+          } else {
+            set.delete(key);
+          }
+          renderPlanSearch();
+        });
+      });
+    }
+
+    function renderPlanSearch() {
+      updateTierRankRefs();
+      const pipeline = planPipeline();
+      renderExclusionOptions(sortPlanRows([...pipeline.majorRows]));
+      renderRegionOptions(sortPlanRows([...pipeline.exclusionRows]));
+      const results = sortPlanTableRows(sortPlanRows([...pipeline.finalRows]));
+      const displayRows = results.slice(0, 500);
+      currentPlanDisplayRows = displayRows;
+      $("planRows").innerHTML = displayRows.map((row, index) => {
+        const inPool = schoolPool.some((item) => !item.removed && schoolPoolIdentity(item) === schoolPoolIdentity(row));
+        return `
+        <tr>
+          <td>
+            <div class="row-actions">
+              <button type="button" title="加入学校到备选池，并标记这个专业" onclick="addPlanRowSchoolToPool(${index})">+</button>
+              <button type="button" class="danger" title="从备选池移除这所学校" ${inPool ? "" : "disabled"} onclick="removePlanRowSchoolFromPool(${index})">x</button>
+            </div>
+          </td>
+          <td>${escapeHtml(row.schoolCode)} ${escapeHtml(cleanDisplaySchool(row.school))}</td>
+          <td>${escapeHtml([row.province, row.city].filter(Boolean).join(" "))}</td>
+          <td>${escapeHtml(row.groupCode)}</td>
+          <td>${escapeHtml(row.majorCode)}</td>
+          <td><span class="truncate">${escapeHtml(row.major)}</span></td>
+          <td>${escapeHtml(row.score2025 && row.score2025.min_score_2025)}</td>
+          <td>${escapeHtml(row.score2025 && row.score2025.min_rank_2025)}</td>
+          <td><span class="tag ${tierClass(row.autoTier)}">${escapeHtml(row.autoTier)}</span></td>
+        </tr>
+      `;
+      }).join("");
+
+      const groups = new Set(results.map((row) => `${row.schoolCode}-${row.groupCode}`));
+      const schools = new Set(results.map((row) => row.schoolCode || row.school));
+      $("planResultCount").textContent = results.length;
+      $("planDataCount").textContent = planMajors.length;
+      $("planGroupCount").textContent = groups.size;
+      $("planSchoolCount").textContent = schools.size;
+      $("planLanguageBlocked").textContent = results.filter((row) => row.japaneseEligible === "不可报").length;
+      $("planCheckCount").textContent = results.filter((row) => row.matchStatus === "未匹配" || row.parseStatus !== "ok").length;
+      $("traceBase").textContent = pipeline.enriched.length;
+      $("traceScore").textContent = pipeline.scoreRows.length;
+      $("traceMajor").textContent = pipeline.majorRows.length;
+      $("traceExclusion").textContent = pipeline.exclusionRows.length;
+      $("traceRegion").textContent = pipeline.regionRows.length;
+      $("traceFinal").textContent = pipeline.finalRows.length;
+    }
+
+    function fullPlanResults() {
+      const mode = valueOf("fullSearchMode");
+      const keyword = valueOf("fullKeyword").toLowerCase();
+      const city = valueOf("fullCity").toLowerCase();
+      const groupFilter = normalizeGroup(valueOf("fullGroupFilter"));
+      const batch = valueOf("fullBatch");
+      const onlySubject = $("fullOnlySubject").checked;
+      const hideLanguage = $("fullHideLanguage").checked;
+      return planMajors.filter((row) => {
+        const target = mode === "school"
+          ? `${row.school || ""} ${row.schoolCode || ""}`.toLowerCase()
+          : `${row.major || ""} ${row.remarks || ""} ${row.school || ""} ${row.schoolCode || ""}`.toLowerCase();
+        const keywordOk = !keyword || target.includes(keyword);
+        const cityOk = !city || `${row.province || ""} ${row.city || ""} ${row.school || ""}`.toLowerCase().includes(city);
+        const groupOk = !groupFilter || normalizeGroup(row.groupCode).includes(groupFilter);
+        const batchOk = !batch || row.batch === batch;
+        const subjectOk = !onlySubject || row.subjectEligible === "可报";
+        const languageOk = !hideLanguage || row.japaneseEligible !== "不可报";
+        return keywordOk && cityOk && groupOk && batchOk && subjectOk && languageOk;
+      }).sort((a, b) => String(a.school || "").localeCompare(String(b.school || ""), "zh-CN") ||
+        String(a.groupCode || "").localeCompare(String(b.groupCode || ""), "zh-CN") ||
+        String(a.majorCode || "").localeCompare(String(b.majorCode || ""), "zh-CN"));
+    }
+
+    function renderFullPlanSearch() {
+      const results = fullPlanResults();
+      const displayRows = results.slice(0, 500);
+      $("fullPlanRows").innerHTML = displayRows.map((row) => `
+        <tr>
+          <td>${escapeHtml(row.schoolCode)} ${escapeHtml(cleanDisplaySchool(row.school))}</td>
+          <td>${escapeHtml([row.province, row.city].filter(Boolean).join(" "))}</td>
+          <td>${escapeHtml(row.groupCode)}</td>
+          <td>${escapeHtml(row.subjectReq)}</td>
+          <td><span class="tag ${statusClass(row.subjectEligible)}">${escapeHtml(row.subjectEligible || "待核")}</span></td>
+          <td><span class="tag ${statusClass(row.japaneseEligible)}">${escapeHtml(row.japaneseEligible || "待核")}</span></td>
+          <td>${escapeHtml(row.majorCode)}</td>
+          <td><span class="truncate">${escapeHtml(row.major)}</span></td>
+          <td>${escapeHtml(row.duration)}</td>
+          <td>${escapeHtml(row.plan2026)}</td>
+          <td>${escapeHtml(row.tuition)}</td>
+          <td>${foldedNote(row.remarks || row.hardReason)}</td>
+        </tr>
+      `).join("");
+      const groups = new Set(results.map((row) => `${row.schoolCode}-${row.groupCode}`));
+      const schools = new Set(results.map((row) => row.schoolCode || row.school));
+      $("fullResultCount").textContent = results.length;
+      $("fullDataCount").textContent = planMajors.length;
+      $("fullGroupCount").textContent = groups.size;
+      $("fullSchoolCount").textContent = schools.size;
+      $("fullLanguageBlocked").textContent = results.filter((row) => row.japaneseEligible === "不可报").length;
+      $("fullShownCount").textContent = displayRows.length;
+    }
+
+    function addCurrentPlanResultsToEntries() {
+      const results = planSearchResults().filter((row) => ["冲", "稳", "保", "垫底", "未匹配"].includes(row.autoTier));
+      const groups = new Map();
+      results.forEach((row) => {
+        const key = `${row.schoolCode}|${row.groupCode}`;
+        if (!groups.has(key)) {
+          groups.set(key, {
+            base: row,
+            majors: [],
+            planSum: 0
+          });
+        }
+        groups.get(key).majors.push(`${row.majorCode} ${row.major} ${row.plan2026}人`);
+        if (Number.isFinite(Number(row.plan2026))) {
+          groups.get(key).planSum += Number(row.plan2026);
+        }
+      });
+
+      const existing = new Set(entries.map((entry) => `${entry.schoolCode}|${entry.groupCode}`));
+      const toAdd = Array.from(groups.values()).filter((item) => !existing.has(`${item.base.schoolCode}|${item.base.groupCode}`));
+      if (!toAdd.length) {
+        alert("当前筛选结果没有可新增的冲稳保垫/未匹配专业组。");
+        return;
+      }
+      if (toAdd.length > 100 && !confirm(`将新增 ${toAdd.length} 个专业组，数量较多，确定继续？`)) {
+        return;
+      }
+
+      const newEntries = toAdd.map((item) => {
+        const row = item.base;
+        const score = row.score2025 || {};
+        return {
+          id: crypto.randomUUID(),
+          order: "",
+          tier: row.autoTier,
+          schoolCode: row.schoolCode,
+          school: cleanDisplaySchool(row.school),
+          groupCode: row.groupCode,
+          subjectReq: row.subjectReq,
+          subjectEligible: row.subjectEligible || "待核",
+          japaneseEligible: row.japaneseEligible || "待核",
+          languageReq: row.remarks || "",
+          hardStatus: row.hardStatus || "待核",
+          hardReason: row.hardReason || "",
+          province: row.province || "",
+          city: row.city || "",
+          rank2025: score.min_rank_2025 ? Number(score.min_rank_2025) : "",
+          score2025: score.min_score_2025 ? Number(score.min_score_2025) : "",
+          avgScore2025: "",
+          avgRank2025: "",
+          plan2026: item.planSum || "",
+          tuition: "",
+          majors: item.majors.join("；"),
+          majorIntroLinks: "",
+          limits: row.remarks || "",
+          reason: `2025等位分${valueOf("equivScore2025") || "492"}；自动档位:${row.autoTier}；2025最低分:${score.min_score_2025 || ""}；2025最低位次:${score.min_rank_2025 || ""}；匹配方式:${row.matchStatus}`,
+          sourceLinks: "",
+          futureResearch: "",
+          notes: ""
+        };
+      });
+      entries = entries.concat(newEntries);
+      saveEntries();
+      render();
+      alert(`已新增 ${newEntries.length} 个候选专业组。`);
+    }
+
+    function aggregateStatus(rows, field) {
+      const values = rows.map((row) => row[field]).filter(Boolean);
+      if (values.length && values.every((value) => value === "可报" || value === "通过")) return values[0];
+      if (values.some((value) => value === "不可报" || value === "不通过")) return "待核";
+      return values[0] || "待核";
+    }
+
+    function scoreRangeText(rows, field) {
+      const values = rows
+        .map((row) => scoreNumber(row.score2025 && row.score2025[field]))
+        .filter((value) => value !== null);
+      if (!values.length) return "";
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      return min === max ? String(min) : `${min}-${max}`;
+    }
+
+    function representativeScore(rows) {
+      const scored = rows
+        .map((row) => row.score2025 || {})
+        .filter((score) => score.min_score_2025 || score.min_rank_2025)
+        .sort((a, b) => numericSort(a.min_score_2025, b.min_score_2025) ||
+          numericSort(b.min_rank_2025, a.min_rank_2025));
+      return scored[0] || {};
+    }
+
+    function dominantTier(rows) {
+      const counts = new Map();
+      rows.forEach((row) => counts.set(row.autoTier, (counts.get(row.autoTier) || 0) + 1));
+      return Array.from(counts.entries())
+        .sort((a, b) => b[1] - a[1] || tierOrder(a[0]) - tierOrder(b[0]))[0]?.[0] || "待定";
+    }
+
+    function schoolPoolIdentity(rowOrItem) {
+      return rowOrItem.schoolCode || rowOrItem.school || "";
+    }
+
+    function markedMajorLabel(row) {
+      return `${row.groupCode || ""}-${row.majorCode || ""} ${row.major || ""} ${row.plan2026 || ""}人`.trim();
+    }
+
+    function markedMajorKey(row) {
+      return `${normalizeGroup(row.groupCode)}|${normalizeMajorCode(row.majorCode)}|${normalizeMajorName(row.major)}`;
+    }
+
+    function addMarkedMajorsToPoolItem(item, rows) {
+      const existing = new Set(item.markedMajors || []);
+      rows.map(markedMajorLabel).filter(Boolean).forEach((label) => existing.add(label));
+      item.markedMajors = Array.from(existing);
+      const existingKeys = new Set(item.markedMajorKeys || []);
+      rows.map(markedMajorKey).filter(Boolean).forEach((key) => existingKeys.add(key));
+      item.markedMajorKeys = Array.from(existingKeys);
+    }
+
+    function buildSchoolPoolItem(rows, markedRows = []) {
+      const row = rows[0];
+      const score = representativeScore(rows);
+      const groupCodes = Array.from(new Set(rows.map((item) => item.groupCode).filter(Boolean))).sort();
+      const tiers = Array.from(new Set(rows.map((item) => item.autoTier).filter(Boolean))).sort((a, b) => tierOrder(a) - tierOrder(b));
+      const planSum = rows.reduce((sum, item) => {
+        const value = Number(item.plan2026);
+        return Number.isFinite(value) ? sum + value : sum;
+      }, 0);
+      const sampleMajors = rows.slice(0, 18).map((item) => `${item.groupCode}-${item.majorCode} ${item.major} ${item.plan2026 || ""}人`);
+      const item = {
+        id: crypto.randomUUID(),
+        tier: dominantTier(rows),
+        schoolCode: row.schoolCode,
+        school: cleanDisplaySchool(row.school),
+        province: row.province || "",
+        city: row.city || "",
+        groupCodes,
+        tiers,
+        subjectReq: `涉及专业组：${groupCodes.join("、")}`,
+        subjectEligible: aggregateStatus(rows, "subjectEligible"),
+        japaneseEligible: aggregateStatus(rows, "japaneseEligible"),
+        hardStatus: "待核",
+        rank2025: score.min_rank_2025 ? Number(score.min_rank_2025) : "",
+        score2025: score.min_score_2025 ? Number(score.min_score_2025) : "",
+        plan2026: planSum || "",
+        majorCount: rows.length,
+        groupCount: groupCodes.length,
+        scoreRange2025: scoreRangeText(rows, "min_score_2025") || "未匹配",
+        rankRange2025: scoreRangeText(rows, "min_rank_2025") || "未匹配",
+        markedMajors: [],
+        majors: sampleMajors.join("；") + (rows.length > sampleMajors.length ? `；另有 ${rows.length - sampleMajors.length} 个专业` : ""),
+        limits: rows.map((majorRow) => majorRow.remarks).filter(Boolean).slice(0, 6).join("；"),
+        reason: `学校汇总；包含档位:${tiers.join("、") || "待定"}；2025分范围:${scoreRangeText(rows, "min_score_2025") || "未匹配"}；2025位次范围:${scoreRangeText(rows, "min_rank_2025") || "未匹配"}；当前筛选后专业数:${rows.length}；专业组数:${groupCodes.length}`,
+        notes: "学校层面候选"
+      };
+      addMarkedMajorsToPoolItem(item, markedRows);
+      return item;
+    }
+
+    function planRowsForSchool(row) {
+      const key = schoolPoolIdentity(row);
+      return planSearchResults().filter((item) =>
+        ["冲", "稳", "保", "垫底", "未匹配"].includes(item.autoTier) &&
+        schoolPoolIdentity(item) === key
+      );
+    }
+
+    function allPlanRowsForSchool(item) {
+      const key = schoolPoolIdentity(item);
+      return planMajors
+        .filter((row) => schoolPoolIdentity(row) === key)
+        .map(enrichPlanRow)
+        .sort((a, b) => textSort(normalizeGroup(a.groupCode), normalizeGroup(b.groupCode)) ||
+          textSort(normalizeMajorCode(a.majorCode), normalizeMajorCode(b.majorCode)) ||
+          textSort(a.major, b.major));
+    }
+
+    function poolDetailIndex(poolId, row) {
+      currentPoolDetailRows.push({ poolId, row });
+      return currentPoolDetailRows.length - 1;
+    }
+
+    function isPoolMajorMarked(item, row) {
+      return new Set(item.markedMajorKeys || []).has(markedMajorKey(row)) ||
+        new Set(item.markedMajors || []).has(markedMajorLabel(row));
+    }
+
+    function togglePoolMajorMark(index) {
+      const detail = currentPoolDetailRows[index];
+      if (!detail) return;
+      const item = schoolPool.find((poolItem) => poolItem.id === detail.poolId);
+      if (!item) return;
+      const key = markedMajorKey(detail.row);
+      const label = markedMajorLabel(detail.row);
+      const keys = new Set(item.markedMajorKeys || []);
+      const labels = new Set(item.markedMajors || []);
+      if (keys.has(key) || labels.has(label)) {
+        keys.delete(key);
+        labels.delete(label);
+      } else {
+        keys.add(key);
+        labels.add(label);
+      }
+      item.markedMajorKeys = Array.from(keys);
+      item.markedMajors = Array.from(labels);
+      saveSchoolPool();
+      renderSchoolPool();
+      renderPlanSearch();
+    }
+
+    function renderPoolMajorDetails(item) {
+      const rows = allPlanRowsForSchool(item);
+      if (!rows.length) return '<span class="muted">未在 2026 招生计划中找到该校专业明细。</span>';
+      const groups = new Map();
+      rows.forEach((row) => {
+        const key = normalizeGroup(row.groupCode) || "未分组";
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(row);
+      });
+      return `<div class="pool-major-groups">${Array.from(groups.entries()).map(([group, groupRows]) => `
+        <div class="pool-major-group">
+          <h3>专业组 ${escapeHtml(group)} · ${escapeHtml(groupRows[0].subjectReq || "选科待核")} · ${groupRows.length} 个专业</h3>
+          <table class="pool-major-table">
+            <thead>
+              <tr>
+                <th>标记</th>
+                <th>专业代码</th>
+                <th>专业</th>
+                <th>2025分</th>
+                <th>2025位次</th>
+                <th>档位</th>
+                <th>2026计划</th>
+                <th>学费</th>
+                <th>日语</th>
+                <th>备注</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${groupRows.map((row) => {
+                const detailIndex = poolDetailIndex(item.id, row);
+                const marked = isPoolMajorMarked(item, row);
+                return `
+                  <tr>
+                    <td><button type="button" class="mini-btn ${marked ? "primary" : ""}" onclick="togglePoolMajorMark(${detailIndex})">${marked ? "已标记" : "标记"}</button></td>
+                    <td>${escapeHtml(row.majorCode)}</td>
+                    <td>${escapeHtml(row.major)}</td>
+                    <td>${escapeHtml(row.score2025 && row.score2025.min_score_2025)}</td>
+                    <td>${escapeHtml(row.score2025 && row.score2025.min_rank_2025)}</td>
+                    <td><span class="tag ${tierClass(row.autoTier)}">${escapeHtml(row.autoTier)}</span></td>
+                    <td>${escapeHtml(row.plan2026)}</td>
+                    <td>${escapeHtml(row.tuition)}</td>
+                    <td><span class="tag ${statusClass(row.japaneseEligible)}">${escapeHtml(row.japaneseEligible || "待核")}</span></td>
+                    <td>${foldedNote(row.remarks || row.hardReason)}</td>
+                  </tr>
+                `;
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
+      `).join("")}</div>`;
+    }
+
+    function addCurrentSchoolsToEntries() {
+      const results = planSearchResults().filter((row) => ["冲", "稳", "保", "垫底", "未匹配"].includes(row.autoTier));
+      const schools = new Map();
+      results.forEach((row) => {
+        const key = row.schoolCode || row.school;
+        if (!schools.has(key)) schools.set(key, []);
+        schools.get(key).push(row);
+      });
+
+      const existing = new Set(schoolPool.filter((item) => !item.removed).map((item) => item.schoolCode || item.school));
+      const toAdd = Array.from(schools.values()).filter((rows) => {
+        const base = rows[0];
+        return !existing.has(base.schoolCode || base.school);
+      });
+      if (!toAdd.length) {
+        alert("当前筛选结果没有可新增的学校。");
+        return;
+      }
+      if (toAdd.length > 80 && !confirm(`将新增 ${toAdd.length} 所学校，数量较多，确定继续？`)) {
+        return;
+      }
+
+      const newEntries = toAdd.map((rows) => buildSchoolPoolItem(rows));
+      schoolPool = schoolPool.concat(newEntries);
+      saveSchoolPool();
+      renderSchoolPool();
+      switchView("poolView");
+      alert(`已新增 ${newEntries.length} 所学校到备选池。`);
+    }
+
+    function addPlanRowSchoolToPool(index) {
+      const row = currentPlanDisplayRows[index];
+      if (!row) return;
+      const key = schoolPoolIdentity(row);
+      const existing = schoolPool.find((item) => schoolPoolIdentity(item) === key);
+      if (existing) {
+        existing.removed = false;
+        addMarkedMajorsToPoolItem(existing, [row]);
+      } else {
+        const rows = planRowsForSchool(row);
+        schoolPool.push(buildSchoolPoolItem(rows.length ? rows : [row], [row]));
+      }
+      saveSchoolPool();
+      renderSchoolPool();
+      renderPlanSearch();
+    }
+
+    function removePlanRowSchoolFromPool(index) {
+      const row = currentPlanDisplayRows[index];
+      if (!row) return;
+      const key = schoolPoolIdentity(row);
+      schoolPool.forEach((item) => {
+        if (schoolPoolIdentity(item) === key) {
+          item.removed = true;
+          expandedPoolSchools.delete(item.id);
+        }
+      });
+      saveExpandedPoolSchools();
+      saveSchoolPool();
+      renderSchoolPool();
+      renderPlanSearch();
+    }
+
+    function deleteSchoolPoolItem(id) {
+      if (!confirm("从备选池移除这所学校？")) return;
+      const item = schoolPool.find((poolItem) => poolItem.id === id);
+      if (item) item.removed = true;
+      expandedPoolSchools.delete(id);
+      saveExpandedPoolSchools();
+      saveSchoolPool();
+      renderSchoolPool();
+      renderPlanSearch();
+    }
+
+    function restoreSchoolPoolItem(id) {
+      const item = schoolPool.find((poolItem) => poolItem.id === id);
+      if (!item) return;
+      item.removed = false;
+      saveSchoolPool();
+      renderSchoolPool();
+      renderPlanSearch();
+    }
+
+    function togglePoolSchoolDetails(id) {
+      if (expandedPoolSchools.has(id)) {
+        expandedPoolSchools.delete(id);
+      } else {
+        expandedPoolSchools.add(id);
+      }
+      saveExpandedPoolSchools();
+      renderSchoolPool();
+    }
+
+    function poolColumnValue(item, key) {
+      if (key === "tier") return tierOrder(item.tier);
+      if (key === "school") return `${item.schoolCode || ""} ${item.school || ""}`;
+      if (key === "location") return `${item.province || ""} ${item.city || ""}`;
+      if (key === "groups") return (item.groupCodes || []).join("、");
+      if (key === "score") return item.score2025 || String(item.scoreRange2025 || "").split("-")[0];
+      if (key === "rank") return item.rank2025 || String(item.rankRange2025 || "").split("-").pop();
+      if (key === "plan") return item.plan2026;
+      if (key === "majorCount") return item.majorCount;
+      if (key === "marked") return (item.markedMajors || []).join("；");
+      return "";
+    }
+
+    function sortPoolRows(rows) {
+      if (!poolColumnSort.key) return rows;
+      return rows.sort((a, b) => poolColumnSort.direction * (
+        compareSortValues(poolColumnValue(a, poolColumnSort.key), poolColumnValue(b, poolColumnSort.key)) ||
+        textSort(a.school, b.school)
+      ));
+    }
+
+    function setPoolColumnSort(key) {
+      toggleSortState(poolColumnSort, key);
+      renderSchoolPool();
+    }
+
+    function refreshSchoolPoolItem(item) {
+      const rows = allPlanRowsForSchool(item);
+      if (!rows.length) return;
+      const score = representativeScore(rows);
+      const groupCodes = Array.from(new Set(rows.map((row) => row.groupCode).filter(Boolean))).sort();
+      const tiers = Array.from(new Set(rows.map((row) => row.autoTier).filter(Boolean))).sort((a, b) => tierOrder(a) - tierOrder(b));
+      const planSum = rows.reduce((sum, row) => {
+        const value = Number(row.plan2026);
+        return Number.isFinite(value) ? sum + value : sum;
+      }, 0);
+      item.tier = dominantTier(rows);
+      item.groupCodes = groupCodes;
+      item.tiers = tiers;
+      item.subjectReq = `涉及专业组：${groupCodes.join("、")}`;
+      item.subjectEligible = aggregateStatus(rows, "subjectEligible");
+      item.japaneseEligible = aggregateStatus(rows, "japaneseEligible");
+      item.rank2025 = score.min_rank_2025 ? Number(score.min_rank_2025) : "";
+      item.score2025 = score.min_score_2025 ? Number(score.min_score_2025) : "";
+      item.plan2026 = planSum || "";
+      item.majorCount = rows.length;
+      item.groupCount = groupCodes.length;
+      item.scoreRange2025 = scoreRangeText(rows, "min_score_2025") || "未匹配";
+      item.rankRange2025 = scoreRangeText(rows, "min_rank_2025") || "未匹配";
+      item.reason = `学校汇总；包含档位:${tiers.join("、") || "待定"}；2025分范围:${item.scoreRange2025}；2025位次范围:${item.rankRange2025}；当前招生计划专业数:${rows.length}；专业组数:${groupCodes.length}`;
+    }
+
+    function renderSchoolPool() {
+      currentPoolDetailRows = [];
+      schoolPool.forEach((item) => {
+        if (!Array.isArray(item.markedMajors)) item.markedMajors = [];
+        if (!Array.isArray(item.markedMajorKeys)) item.markedMajorKeys = [];
+        refreshSchoolPoolItem(item);
+      });
+      const activeRows = sortPoolRows(schoolPool.filter((item) => !item.removed));
+      const removedRows = sortPoolRows(schoolPool.filter((item) => item.removed));
+      $("schoolPoolRows").innerHTML = activeRows.map((item) => {
+        const expanded = expandedPoolSchools.has(item.id);
+        return `
+        <tr class="pool-summary-row" onclick="togglePoolSchoolDetails('${item.id}')">
+          <td class="pool-toggle-cell">
+            ${expanded ? "▾" : "▸"}
+            <span class="tag ${tierClass(item.tier)}">${escapeHtml(item.tier || "待定")}</span>
+            <button type="button" class="danger mini-btn" onclick="event.stopPropagation(); deleteSchoolPoolItem('${item.id}')">移出</button>
+          </td>
+          <td>${escapeHtml(item.schoolCode)} ${escapeHtml(item.school)}</td>
+          <td>${escapeHtml([item.province, item.city].filter(Boolean).join(" "))}</td>
+          <td>${escapeHtml((item.groupCodes || []).join("、"))}</td>
+          <td>${escapeHtml(item.scoreRange2025 || item.score2025 || "")}</td>
+          <td>${escapeHtml(item.rankRange2025 || item.rank2025 || "")}</td>
+          <td>${escapeHtml(item.plan2026 || "")}</td>
+          <td>${escapeHtml(item.majorCount || "")}</td>
+          <td>${foldedNote((item.markedMajors || []).join("；"))}</td>
+        </tr>
+        ${expanded ? `
+          <tr class="pool-detail-row">
+            <td colspan="9">${renderPoolMajorDetails(item)}</td>
+          </tr>
+        ` : ""}
+      `;
+      }).join("");
+      $("removedSchoolPoolRows").innerHTML = removedRows.map((item) => `
+        <tr class="pool-summary-row removed">
+          <td>已移出</td>
+          <td>${escapeHtml(item.schoolCode)} ${escapeHtml(item.school)}</td>
+          <td>${escapeHtml([item.province, item.city].filter(Boolean).join(" "))}</td>
+          <td>${escapeHtml((item.groupCodes || []).join("、"))}</td>
+          <td>${escapeHtml(item.scoreRange2025 || item.score2025 || "")}</td>
+          <td>${escapeHtml(item.rankRange2025 || item.rank2025 || "")}</td>
+          <td>${escapeHtml(item.plan2026 || "")}</td>
+          <td>${escapeHtml(item.majorCount || "")}</td>
+          <td><button type="button" class="mini-btn" onclick="restoreSchoolPoolItem('${item.id}')">加回</button></td>
+        </tr>
+      `).join("");
+      $("poolCount").textContent = activeRows.length;
+      $("poolRushCount").textContent = activeRows.filter((item) => item.tier === "冲").length;
+      $("poolStableCount").textContent = activeRows.filter((item) => item.tier === "稳").length;
+      $("poolSafeCount").textContent = activeRows.filter((item) => ["保", "垫底"].includes(item.tier)).length;
+      $("poolUnmatchedCount").textContent = activeRows.filter((item) => (item.tiers || []).includes("未匹配") || item.tier === "未匹配").length;
+      $("manualScoreCount").textContent = manualScores.length;
+    }
+
+    function migrateLegacySchoolPool() {
+      const existing = new Set(schoolPool.filter((item) => !item.removed).map((item) => item.schoolCode || item.school));
+      const legacy = entries
+        .filter((entry) => entry.groupCode === "学校汇总")
+        .filter((entry) => !existing.has(entry.schoolCode || entry.school))
+        .map((entry) => ({
+          id: crypto.randomUUID(),
+          tier: entry.tier || "待定",
+          schoolCode: entry.schoolCode || "",
+          school: entry.school || "",
+          province: entry.province || "",
+          city: entry.city || "",
+          groupCodes: String(entry.subjectReq || "").replace("涉及专业组：", "").split(/[、,，\s]+/).filter(Boolean),
+          tiers: [entry.tier || "待定"],
+          subjectReq: entry.subjectReq || "",
+          subjectEligible: entry.subjectEligible || "待核",
+          japaneseEligible: entry.japaneseEligible || "待核",
+          hardStatus: entry.hardStatus || "待核",
+          rank2025: entry.rank2025 || "",
+          score2025: entry.score2025 || "",
+          plan2026: entry.plan2026 || "",
+          majorCount: "",
+          groupCount: "",
+          scoreRange2025: entry.score2025 || "",
+          rankRange2025: entry.rank2025 || "",
+          markedMajors: [],
+          majors: entry.majors || "",
+          limits: entry.limits || "",
+          reason: entry.reason || "从候选志愿表迁移的学校汇总",
+          notes: "从候选志愿表迁移"
+        }));
+      if (!legacy.length) return;
+      schoolPool = schoolPool.concat(legacy);
+      saveSchoolPool();
+    }
+
+    function schoolSearchCandidates(keyword) {
+      const terms = splitKeywords(keyword);
+      const schools = new Map();
+      planMajors.forEach((row) => {
+        const target = `${row.schoolCode || ""} ${row.school || ""} ${cleanDisplaySchool(row.school)} ${row.province || ""} ${row.city || ""}`.toLowerCase();
+        if (terms.length && !terms.every((term) => target.includes(term))) return;
+        const key = schoolPoolIdentity(row);
+        if (!schools.has(key)) {
+          schools.set(key, {
+            schoolCode: row.schoolCode || "",
+            school: cleanDisplaySchool(row.school),
+            province: row.province || "",
+            city: row.city || "",
+            rows: []
+          });
+        }
+        schools.get(key).rows.push(row);
+      });
+      return Array.from(schools.values()).sort((a, b) => textSort(a.school, b.school)).slice(0, 80);
+    }
+
+    function openManualSchoolModal() {
+      $("manualSchoolModal").classList.remove("hidden");
+      renderManualSchoolSearch();
+      $("manualSchoolSearch").focus();
+    }
+
+    function closeManualSchoolModal() {
+      $("manualSchoolModal").classList.add("hidden");
+    }
+
+    function renderManualSchoolSearch() {
+      manualSchoolSearchResults = schoolSearchCandidates(valueOf("manualSchoolSearch"));
+      $("manualSchoolSearchRows").innerHTML = manualSchoolSearchResults.map((item, index) => {
+        const groupCodes = Array.from(new Set(item.rows.map((row) => row.groupCode).filter(Boolean))).sort();
+        const existing = schoolPool.find((poolItem) => schoolPoolIdentity(poolItem) === (item.schoolCode || item.school));
+        const exists = existing && !existing.removed;
+        return `
+          <tr>
+            <td>${escapeHtml(item.schoolCode)} ${escapeHtml(item.school)}</td>
+            <td>${escapeHtml([item.province, item.city].filter(Boolean).join(" "))}</td>
+            <td>${escapeHtml(groupCodes.join("、"))}</td>
+            <td>${escapeHtml(item.rows.length)}</td>
+            <td><button type="button" ${exists ? "disabled" : ""} onclick="addManualSchoolByIndex(${index})">${exists ? "已在池中" : existing ? "加回" : "加入"}</button></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function addManualSchoolByIndex(index) {
+      const item = manualSchoolSearchResults[index];
+      if (!item) return;
+      const key = item.schoolCode || item.school;
+      const existing = schoolPool.find((poolItem) => schoolPoolIdentity(poolItem) === key);
+      if (existing) {
+        existing.removed = false;
+        saveSchoolPool();
+        renderSchoolPool();
+        renderManualSchoolSearch();
+        return;
+      }
+      const rows = item.rows.map(enrichPlanRow);
+      schoolPool.push(buildSchoolPoolItem(rows));
+      saveSchoolPool();
+      renderSchoolPool();
+      renderManualSchoolSearch();
+    }
+
+    function manualScoreFromForm() {
+      return {
+        id: crypto.randomUUID(),
+        school_code: valueOf("manualSchoolCode"),
+        school_name: valueOf("manualSchool"),
+        group_code: valueOf("manualGroupCode"),
+        major_code: normalizeMajorCode(valueOf("manualMajorCode")),
+        major_name: valueOf("manualMajor"),
+        min_score_2025: numberOrBlank("manualScore"),
+        min_rank_2025: numberOrBlank("manualRank"),
+        admission_type: valueOf("manualAdmissionType") || "手动补录",
+        source: valueOf("manualSource")
+      };
+    }
+
+    function resetManualScoreForm() {
+      ["manualSchoolCode", "manualSchool", "manualGroupCode", "manualMajorCode", "manualMajor", "manualScore", "manualRank", "manualSource"].forEach((id) => {
+        $(id).value = "";
+      });
+      $("manualAdmissionType").value = "手动补录";
+    }
+
+    function saveManualScoreFromForm() {
+      const score = manualScoreFromForm();
+      if ((!score.school_code && !score.school_name) || !score.group_code || (!score.major_code && !score.major_name) || score.min_score_2025 === "") {
+        alert("至少填写学校、专业组、专业代码或专业名，以及 2025 最低分。");
+        return;
+      }
+      manualScores.push(score);
+      saveManualScores();
+      resetManualScoreForm();
+      renderManualScores();
+      renderSchoolPool();
+      renderPlanSearch();
+    }
+
+    function deleteManualScore(id) {
+      if (!confirm("删除这条手动专业线？")) return;
+      manualScores = manualScores.filter((item) => item.id !== id);
+      saveManualScores();
+      renderManualScores();
+      renderSchoolPool();
+      renderPlanSearch();
+    }
+
+    function renderManualScores() {
+      $("manualScoreRows").innerHTML = manualScores.map((item) => `
+        <tr>
+          <td>${escapeHtml(item.school_code)} ${escapeHtml(item.school_name)}</td>
+          <td>${escapeHtml(item.group_code)}</td>
+          <td>${escapeHtml(item.major_code)}</td>
+          <td>${escapeHtml(item.major_name)}</td>
+          <td>${escapeHtml(item.min_score_2025)}</td>
+          <td>${escapeHtml(item.min_rank_2025)}</td>
+          <td>${escapeHtml(item.admission_type)}</td>
+          <td>${escapeHtml(item.source)}</td>
+          <td><button type="button" class="danger" onclick="deleteManualScore('${item.id}')">删除</button></td>
+        </tr>
+      `).join("");
+      $("manualScoreCount").textContent = manualScores.length;
+    }
+
+    function finalChoiceTiers() {
+      return [
+        { tier: "冲", label: "冲", className: "rush" },
+        { tier: "稳", label: "稳", className: "stable" },
+        { tier: "保", label: "保", className: "safe" },
+        { tier: "垫底", label: "垫底", className: "floor" },
+        { tier: "未匹配", label: "未匹配 / 待核", className: "floor" },
+        { tier: "待定", label: "待定", className: "floor" }
+      ];
+    }
+
+    function finalChoiceRowsForTier(rows, tier) {
+      return rows.filter((entry) => (entry.tier || "待定") === tier)
+        .sort((a, b) => numericSort(a.order, b.order) ||
+          numericSort(a.rank2025, b.rank2025) ||
+          textSort(a.school, b.school));
+    }
+
+    function renderFinalChoiceBoard(rows) {
+      $("finalChoiceBoard").innerHTML = finalChoiceTiers().map(({ tier, label, className }) => {
+        const tierRows = finalChoiceRowsForTier(rows, tier);
+        if (!tierRows.length && !["冲", "稳", "保", "垫底"].includes(tier)) return "";
+        return `
+          <section class="tier-section ${className}">
+            <div class="tier-section-header">
+              <h2>${escapeHtml(label)}</h2>
+              <span class="muted">${tierRows.length} 个院校专业组</span>
+            </div>
+            <div class="table-wrap">
+              <table class="final-choice-table">
+                <thead>
+                  <tr>
+                    <th>序号</th>
+                    <th>学校</th>
+                    <th>专业组</th>
+                    <th>地区</th>
+                    <th>2025位次</th>
+                    <th>2025分</th>
+                    <th>2026计划</th>
+                    <th>物化地</th>
+                    <th>日语</th>
+                    <th>可报专业</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${tierRows.map((entry) => `
+                    <tr>
+                      <td>${escapeHtml(entry.order)}</td>
+                      <td>${escapeHtml(entry.schoolCode)} ${escapeHtml(entry.school)}</td>
+                      <td>${escapeHtml(entry.groupCode)}</td>
+                      <td>${escapeHtml([entry.province, entry.city].filter(Boolean).join(" "))}</td>
+                      <td>${escapeHtml(entry.rank2025)}</td>
+                      <td>${escapeHtml(entry.score2025)}</td>
+                      <td>${escapeHtml(entry.plan2026)}</td>
+                      <td><span class="tag ${statusClass(entry.subjectEligible)}">${escapeHtml(entry.subjectEligible || "待核")}</span></td>
+                      <td><span class="tag ${statusClass(entry.japaneseEligible)}">${escapeHtml(entry.japaneseEligible || "待核")}</span></td>
+                      <td>${foldedNote(entry.majors)}</td>
+                      <td><button type="button" class="mini-btn" onclick="editEntry('${entry.id}')">编辑</button></td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        `;
+      }).join("");
+    }
+
+    function render() {
+      const rows = filteredEntries();
+      renderFinalChoiceBoard(rows);
+      $("rows").innerHTML = rows.map((entry) => `
+        <tr>
+          <td>${escapeHtml(entry.order)}</td>
+          <td><span class="tag ${tierClass(entry.tier)}">${escapeHtml(entry.tier || "待定")}</span></td>
+          <td>${escapeHtml(entry.schoolCode)}</td>
+          <td>${escapeHtml(entry.school)}</td>
+          <td>${escapeHtml(entry.groupCode)}</td>
+          <td>${escapeHtml(entry.subjectReq)}</td>
+          <td><span class="tag ${statusClass(entry.subjectEligible)}">${escapeHtml(entry.subjectEligible || "待核")}</span></td>
+          <td><span class="tag ${statusClass(entry.japaneseEligible)}">${escapeHtml(entry.japaneseEligible || "待核")}</span></td>
+          <td>${escapeHtml(entry.languageReq)}</td>
+          <td><span class="tag ${statusClass(entry.hardStatus)}">${escapeHtml(entry.hardStatus || "待核")}</span></td>
+          <td>${escapeHtml(entry.hardReason)}</td>
+          <td>${escapeHtml([entry.province, entry.city].filter(Boolean).join(" "))}</td>
+          <td>${escapeHtml(entry.rank2025)}</td>
+          <td>${escapeHtml(entry.score2025)}</td>
+          <td>${escapeHtml(entry.avgScore2025)}</td>
+          <td>${escapeHtml(entry.avgRank2025)}</td>
+          <td>${escapeHtml(entry.plan2026)}</td>
+          <td>${escapeHtml(entry.tuition)}</td>
+          <td>${escapeHtml(entry.majors)}</td>
+          <td>${linkify(entry.majorIntroLinks)}</td>
+          <td>${escapeHtml(entry.limits)}</td>
+          <td>${escapeHtml(entry.reason)}</td>
+          <td>${linkify(entry.sourceLinks)}</td>
+          <td>${escapeHtml(entry.futureResearch)}</td>
+          <td>${escapeHtml(entry.notes)}</td>
+          <td>
+            <div class="row-actions">
+              <button type="button" onclick="editEntry('${entry.id}')">编辑</button>
+              <button type="button" class="danger" onclick="deleteEntry('${entry.id}')">删除</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+
+      $("countAll").textContent = entries.length;
+      $("countRush").textContent = entries.filter((entry) => entry.tier === "冲").length;
+      $("countStable").textContent = entries.filter((entry) => entry.tier === "稳").length;
+      $("countSafe").textContent = entries.filter((entry) => entry.tier === "保").length;
+      $("countFloor").textContent = entries.filter((entry) => entry.tier === "垫底").length;
+      $("countHardBlock").textContent = entries.filter((entry) => {
+        return ["不通过", "待核", undefined, ""].includes(entry.hardStatus) ||
+          ["不可报", "待核", undefined, ""].includes(entry.subjectEligible) ||
+          ["不可报", "待核", undefined, ""].includes(entry.japaneseEligible);
+      }).length;
+    }
+
+    function download(filename, content, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function csvEscape(value) {
+      const text = String(value ?? "");
+      return `"${text.replaceAll('"', '""')}"`;
+    }
+
+    function exportCsv() {
+      const header = fields;
+      const lines = [header.join(",")].concat(entries.map((entry) => header.map((field) => csvEscape(entry[field])).join(",")));
+      download("福建志愿候选表.csv", lines.join("\n"), "text/csv;charset=utf-8");
+    }
+
+    function checked(id) {
+      return Boolean($(id).checked);
+    }
+
+    function excludedGroupLabels() {
+      return Array.from(excludedGroups).map((key) => {
+        const row = planMajors.find((item) => groupKey(item) === key);
+        if (!row) return key;
+        return `${row.schoolCode || ""} ${cleanDisplaySchool(row.school)} 专业组${row.groupCode || ""}`.trim();
+      });
+    }
+
+    function flowFilterSettings() {
+      return {
+        candidateProfile: {
+          score2026: valueOf("currentScore2026"),
+          rank2026: valueOf("currentRank2026"),
+          equivalentScore2025: valueOf("equivScore2025"),
+          household: "福州",
+          subjectCombination: "物化地",
+          foreignLanguage: "日语",
+          strategy: "保专业优先，公办优先，民办可接受，地理相关优先，其次工科"
+        },
+        step1ScorePosition: {
+          rankWindowLow: valueOf("rankWindowLow"),
+          rankWindowHigh: valueOf("rankWindowHigh"),
+          tierFilter: valueOf("planTierFilter"),
+          sortBy: valueOf("planSort"),
+          onlyRankWindow: checked("onlyRankWindow"),
+          keepUnmatchedScores: checked("keepUnmatchedScores"),
+          bands: {
+            rush: valueOf("rushMin"),
+            stable: valueOf("stableMin"),
+            safe: valueOf("safeMin"),
+            floor: valueOf("floorMin")
+          }
+        },
+        step2MajorFilter: {
+          keywordMode: valueOf("planKeywordMode"),
+          keywords: splitKeywords(valueOf("planKeyword")),
+          preference: valueOf("planPreference") || "全部",
+          ownership: valueOf("planOwnership") || "全部",
+          excludedGroups: Array.from(excludedGroups),
+          excludedGroupLabels: excludedGroupLabels(),
+          excludedMajors: Array.from(excludedMajors),
+          onlySubjectEligible: checked("onlySubjectEligible"),
+          hideLanguageBlocked: checked("hideLanguageBlocked"),
+          onlyFuzhouOpportunity: checked("onlyFuzhouOpportunity")
+        },
+        step3RegionFilter: {
+          excludedProvinces: Array.from(excludedProvinces),
+          excludedCities: Array.from(excludedCities)
+        }
+      };
+    }
+
+    function flowStepCounts(pipeline) {
+      return [
+        { step: "1. 招生计划底库", remaining: pipeline.enriched.length, filteredOut: 0 },
+        { step: "2. 分数/位次匹配+待核", remaining: pipeline.scoreRows.length, filteredOut: pipeline.enriched.length - pipeline.scoreRows.length },
+        { step: "3. 专业关键词", remaining: pipeline.majorRows.length, filteredOut: pipeline.scoreRows.length - pipeline.majorRows.length },
+        { step: "4. 排除专业组/专业", remaining: pipeline.exclusionRows.length, filteredOut: pipeline.majorRows.length - pipeline.exclusionRows.length },
+        { step: "5. 地域排除", remaining: pipeline.regionRows.length, filteredOut: pipeline.exclusionRows.length - pipeline.regionRows.length },
+        { step: "6. 偏好与硬条件后", remaining: pipeline.finalRows.length, filteredOut: pipeline.regionRows.length - pipeline.finalRows.length }
+      ];
+    }
+
+    function exportRow(row) {
+      const score = row.score2025 || {};
+      return {
+        schoolCode: row.schoolCode || "",
+        school: cleanDisplaySchool(row.school),
+        province: row.province || "",
+        city: row.city || "",
+        groupCode: row.groupCode || "",
+        majorCode: row.majorCode || "",
+        major: row.major || "",
+        score2025: score.min_score_2025 || "",
+        rank2025: score.min_rank_2025 || "",
+        admissionType2025: score.admission_type || "",
+        tier: row.autoTier || "",
+        matchStatus: row.matchStatus || "",
+        subjectReq: row.subjectReq || "",
+        subjectEligible: row.subjectEligible || "待核",
+        japaneseEligible: row.japaneseEligible || "待核",
+        plan2026: row.plan2026 || "",
+        tuition: row.tuition || "",
+        duration: row.duration || "",
+        ownership: row.ownershipType || row.ownership || "",
+        remarks: row.remarks || "",
+        hardReason: row.hardReason || ""
+      };
+    }
+
+    function schoolGroupSummary(rows) {
+      const groups = new Map();
+      rows.forEach((row) => {
+        const key = `${row.schoolCode || row.school}|${row.groupCode || ""}`;
+        const item = groups.get(key) || {
+          schoolCode: row.schoolCode || "",
+          school: cleanDisplaySchool(row.school),
+          province: row.province || "",
+          city: row.city || "",
+          groupCode: row.groupCode || "",
+          tier: row.autoTier || "",
+          matchStatus: row.matchStatus || "",
+          score2025: row.score2025 && row.score2025.min_score_2025 || "",
+          rank2025: row.score2025 && row.score2025.min_rank_2025 || "",
+          plan2026Total: 0,
+          majors: []
+        };
+        const plan = Number(row.plan2026);
+        if (Number.isFinite(plan)) item.plan2026Total += plan;
+        item.majors.push({
+          majorCode: row.majorCode || "",
+          major: row.major || "",
+          plan2026: row.plan2026 || ""
+        });
+        groups.set(key, item);
+      });
+      return Array.from(groups.values());
+    }
+
+    function schoolSummary(rows) {
+      const schools = new Map();
+      rows.forEach((row) => {
+        const key = row.schoolCode || row.school || "";
+        const item = schools.get(key) || {
+          schoolCode: row.schoolCode || "",
+          school: cleanDisplaySchool(row.school),
+          province: row.province || "",
+          city: row.city || "",
+          tiers: new Set(),
+          groups: new Set(),
+          majorCount: 0,
+          unmatchedCount: 0
+        };
+        item.tiers.add(row.autoTier || "");
+        item.groups.add(row.groupCode || "");
+        item.majorCount += 1;
+        if (row.autoTier === "未匹配" || row.matchStatus === "未匹配") item.unmatchedCount += 1;
+        schools.set(key, item);
+      });
+      return Array.from(schools.values()).map((item) => ({
+        ...item,
+        tiers: Array.from(item.tiers).filter(Boolean),
+        groupCount: item.groups.size,
+        groups: Array.from(item.groups).filter(Boolean)
+      }));
+    }
+
+    function exportFlowReport() {
+      const pipeline = planPipeline();
+      const finalRows = sortPlanRows([...pipeline.finalRows]);
+      const report = {
+        exportedAt: new Date().toISOString(),
+        title: "福建物理类本科批志愿筛选流程",
+        filterSettings: flowFilterSettings(),
+        stepCounts: flowStepCounts(pipeline),
+        finalSummary: {
+          majorRows: finalRows.length,
+          schoolGroups: new Set(finalRows.map((row) => `${row.schoolCode || row.school}|${row.groupCode || ""}`)).size,
+          schools: new Set(finalRows.map((row) => row.schoolCode || row.school)).size,
+          unmatchedRows: finalRows.filter((row) => row.autoTier === "未匹配" || row.matchStatus === "未匹配").length
+        },
+        schoolPool,
+        manualScores2025: manualScores,
+        schoolSummary: schoolSummary(finalRows),
+        schoolGroupSummary: schoolGroupSummary(finalRows),
+        finalMajorList: finalRows.map(exportRow)
+      };
+      download("福建高考筛选流程与可选名单.json", JSON.stringify(report, null, 2), "application/json;charset=utf-8");
+    }
+
+    function buildShareSnapshot() {
+      schoolPool.forEach((item) => refreshSchoolPoolItem(item));
+      return {
+        exportedAt: new Date().toISOString(),
+        title: "福建物理类本科批志愿备选结果",
+        candidateProfile: {
+          score2026: valueOf("currentScore2026"),
+          rank2026: valueOf("currentRank2026"),
+          equivalentScore2025: valueOf("equivScore2025"),
+          subjectCombination: "物化地",
+          foreignLanguage: "日语",
+          strategy: "保专业优先"
+        },
+        schoolPool: schoolPool.filter((item) => !item.removed),
+        removedSchoolPool: schoolPool.filter((item) => item.removed),
+        finalChoices: entries,
+        manualScores2025: manualScores
+      };
+    }
+
+    function exportShareSnapshot() {
+      const content = `window.SHARE_SNAPSHOT = ${JSON.stringify(buildShareSnapshot(), null, 2)};\n`;
+      download("share_snapshot.js", content, "application/javascript;charset=utf-8");
+    }
+
+    function parseCsv(text) {
+      const rows = [];
+      let row = [];
+      let cell = "";
+      let quoted = false;
+      for (let i = 0; i < text.length; i += 1) {
+        const char = text[i];
+        const next = text[i + 1];
+        if (quoted) {
+          if (char === '"' && next === '"') {
+            cell += '"';
+            i += 1;
+          } else if (char === '"') {
+            quoted = false;
+          } else {
+            cell += char;
+          }
+        } else if (char === '"') {
+          quoted = true;
+        } else if (char === ",") {
+          row.push(cell);
+          cell = "";
+        } else if (char === "\n") {
+          row.push(cell);
+          rows.push(row);
+          row = [];
+          cell = "";
+        } else if (char !== "\r") {
+          cell += char;
+        }
+      }
+      row.push(cell);
+      rows.push(row);
+      return rows.filter((line) => line.some((value) => value.trim() !== ""));
+    }
+
+    function csvToEntries(text) {
+      const rows = parseCsv(text);
+      if (rows.length < 2) return [];
+      const header = rows[0].map((value) => value.trim());
+      return rows.slice(1).map((row) => {
+        const entry = { id: crypto.randomUUID() };
+        header.forEach((field, index) => {
+          if (!field) return;
+          const value = row[index] ?? "";
+          if (["order", "rank2025", "score2025", "avgScore2025", "avgRank2025", "plan2026"].includes(field)) {
+            entry[field] = value.trim() === "" ? "" : Number(value);
+          } else {
+            entry[field] = value;
+          }
+        });
+        entry.tier = entry.tier || "待定";
+        entry.subjectEligible = entry.subjectEligible || "待核";
+        entry.japaneseEligible = entry.japaneseEligible || "待核";
+        entry.hardStatus = entry.hardStatus || "待核";
+        return entry;
+      });
+    }
+
+    $("saveEntry").addEventListener("click", () => {
+      const entry = formToEntry();
+      if (!entry.school || !entry.groupCode) {
+        alert("至少填写学校和专业组。");
+        return;
+      }
+      const index = entries.findIndex((item) => item.id === entry.id);
+      if (index >= 0) {
+        entries[index] = entry;
+      } else {
+        entries.push(entry);
+      }
+      saveEntries();
+      resetForm();
+      render();
+    });
+
+    $("resetForm").addEventListener("click", resetForm);
+    ["search", "filterTier", "filterProvince", "sortBy"].forEach((id) => {
+      $(id).addEventListener("input", render);
+    });
+    $("clearFilters").addEventListener("click", () => {
+      $("search").value = "";
+      $("filterTier").value = "";
+      $("filterProvince").value = "";
+      $("sortBy").value = "order";
+      render();
+    });
+    $("exportJson").addEventListener("click", () => {
+      download("福建志愿候选表.json", JSON.stringify(entries, null, 2), "application/json;charset=utf-8");
+    });
+    $("exportCsv").addEventListener("click", exportCsv);
+    $("exportShareSnapshot").addEventListener("click", exportShareSnapshot);
+    $("importBtn").addEventListener("click", () => $("importFile").click());
+    $("importFile").addEventListener("change", async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const text = await file.text();
+      const imported = file.name.toLowerCase().endsWith(".csv") ? csvToEntries(text) : JSON.parse(text);
+      if (!Array.isArray(imported)) {
+        alert("导入格式不正确。");
+        return;
+      }
+      entries = entries.concat(imported);
+      saveEntries();
+      render();
+      event.target.value = "";
+    });
+    document.querySelectorAll(".tab-btn").forEach((button) => {
+      button.addEventListener("click", () => switchView(button.dataset.view));
+    });
+    ["planKeywordMode", "planKeyword", "currentScore2026", "equivScore2025", "currentRank2026", "rankWindowLow", "rankWindowHigh", "rushMin", "stableMin", "safeMin", "floorMin", "planSort", "planTierFilter", "planPreference", "planOwnership", "onlySubjectEligible", "hideLanguageBlocked", "onlyRankWindow", "keepUnmatchedScores", "onlyFuzhouOpportunity"].forEach((id) => {
+      $(id).addEventListener("input", renderPlanSearch);
+      $(id).addEventListener("change", renderPlanSearch);
+    });
+    ["fullSearchMode", "fullKeyword", "fullCity", "fullGroupFilter", "fullBatch", "fullOnlySubject", "fullHideLanguage"].forEach((id) => {
+      $(id).addEventListener("input", renderFullPlanSearch);
+      $(id).addEventListener("change", renderFullPlanSearch);
+    });
+    $("recalcRankBands").addEventListener("click", () => {
+      applyRankRuleBands();
+      renderPlanSearch();
+    });
+    $("saveBandSettings").addEventListener("click", () => {
+      saveBandSettings();
+      alert("已保存分数段设置。");
+    });
+    $("resetBandSettings").addEventListener("click", () => {
+      localStorage.removeItem(bandSettingsKey);
+      $("currentScore2026").value = "505";
+      $("currentRank2026").value = "75826";
+      applyRankRuleBands();
+      renderPlanSearch();
+    });
+    $("addPlanResults").addEventListener("click", addCurrentPlanResultsToEntries);
+    $("addSchoolResults").addEventListener("click", addCurrentSchoolsToEntries);
+    $("exportFlowReport").addEventListener("click", exportFlowReport);
+    $("openManualSchoolAdd").addEventListener("click", openManualSchoolModal);
+    $("closeManualSchoolAdd").addEventListener("click", closeManualSchoolModal);
+    $("runManualSchoolSearch").addEventListener("click", renderManualSchoolSearch);
+    $("manualSchoolSearch").addEventListener("input", renderManualSchoolSearch);
+    $("manualSchoolModal").addEventListener("click", (event) => {
+      if (event.target.id === "manualSchoolModal") closeManualSchoolModal();
+    });
+    $("saveManualScore").addEventListener("click", saveManualScoreFromForm);
+    $("clearManualScoreForm").addEventListener("click", resetManualScoreForm);
+    $("saveExclusions").addEventListener("click", () => {
+      saveExclusionSettings();
+      alert("已保存专业排除设置。");
+    });
+    $("clearExclusions").addEventListener("click", () => {
+      excludedGroups.clear();
+      excludedMajors.clear();
+      localStorage.removeItem(exclusionSettingsKey);
+      renderPlanSearch();
+    });
+    $("saveRegions").addEventListener("click", () => {
+      saveRegionSettings();
+      alert("已保存地域排除设置。");
+    });
+    $("clearRegions").addEventListener("click", () => {
+      excludedProvinces.clear();
+      excludedCities.clear();
+      localStorage.removeItem(regionSettingsKey);
+      renderPlanSearch();
+    });
+    $("clearPlanSearch").addEventListener("click", () => {
+      $("planKeywordMode").value = "include";
+      $("planKeyword").value = "";
+      $("currentScore2026").value = "505";
+      $("currentRank2026").value = "75826";
+      excludedGroups.clear();
+      excludedMajors.clear();
+      excludedProvinces.clear();
+      excludedCities.clear();
+      localStorage.removeItem(exclusionSettingsKey);
+      localStorage.removeItem(regionSettingsKey);
+      applyRankRuleBands();
+      $("planSort").value = "tier";
+      $("planTierFilter").value = "range";
+      $("planPreference").value = "";
+      $("planOwnership").value = "";
+      $("onlySubjectEligible").checked = false;
+      $("hideLanguageBlocked").checked = false;
+      $("onlyRankWindow").checked = true;
+      $("keepUnmatchedScores").checked = true;
+      $("onlyFuzhouOpportunity").checked = false;
+      renderPlanSearch();
+    });
+
+    render();
+    applyRankRuleBands();
+    loadBandSettings();
+    loadExclusionSettings();
+    loadRegionSettings();
+    migrateLegacySchoolPool();
+    renderSchoolPool();
+    renderManualScores();
+    renderPlanSearch();
+    renderFullPlanSearch();
+  </script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>福建高考志愿备选结果</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #fff;
+      --text: #172026;
+      --muted: #64717d;
+      --line: #d9dee4;
+      --rush: #b42318;
+      --stable: #946200;
+      --safe: #067647;
+      --shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.5;
+    }
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+      padding: 18px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    h1 { font-size: 22px; margin: 0 0 6px; }
+    main { max-width: 1440px; margin: 0 auto; padding: 20px 24px 40px; }
+    .muted { color: var(--muted); }
+    .summary {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      margin-bottom: 16px;
+      padding: 16px;
+    }
+    .metric { border-left: 4px solid var(--line); padding-left: 10px; }
+    .metric strong { display: block; font-size: 22px; }
+    .metric span { color: var(--muted); font-size: 13px; }
+    .table-wrap {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: auto;
+    }
+    table { border-collapse: collapse; font-size: 13px; min-width: 1280px; width: 100%; }
+    th, td { border-bottom: 1px solid var(--line); padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #eef2f6; white-space: nowrap; }
+    tr.school-row { cursor: pointer; }
+    tr.school-row:hover { background: #f9fbfd; }
+    .detail-row td { background: #fbfcfe; padding: 10px 12px; }
+    .tag { border-radius: 999px; display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px; }
+    .rush { background: #fef3f2; color: var(--rush); }
+    .stable { background: #fffaeb; color: var(--stable); }
+    .safe, .pass { background: #ecfdf3; color: var(--safe); }
+    .warn { background: #fffaeb; color: var(--stable); }
+    .group-box { background: #fff; border: 1px solid #e5e9ef; border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+    .group-box h3 { background: #f3f6fa; font-size: 13px; margin: 0; padding: 8px 10px; }
+    .major-table { min-width: 980px; }
+    .major-table th, .major-table td { padding: 6px 8px; }
+    details summary { cursor: pointer; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>福建物理类本科批志愿备选结果</h1>
+    <div class="muted" id="snapshotMeta">只读分享页：点击学校行展开专业明细。</div>
+  </header>
+  <main>
+    <section class="summary">
+      <div class="metric"><strong id="schoolCount">0</strong><span>备选学校</span></div>
+      <div class="metric"><strong id="rushCount">0</strong><span>冲</span></div>
+      <div class="metric"><strong id="stableCount">0</strong><span>稳</span></div>
+      <div class="metric"><strong id="safeCount">0</strong><span>保</span></div>
+      <div class="metric"><strong id="floorCount">0</strong><span>垫底</span></div>
+      <div class="metric"><strong id="markedCount">0</strong><span>已标记专业</span></div>
+    </section>
+    <section class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>展开</th>
+            <th>学校</th>
+            <th>所在地</th>
+            <th>专业组</th>
+            <th>2025分</th>
+            <th>2025位次</th>
+            <th>2026计划</th>
+            <th>专业数</th>
+            <th>已标记专业</th>
+          </tr>
+        </thead>
+        <tbody id="schoolRows"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="data/processed/2026_plan_majors.js"></script>
+  <script src="data/processed/2025_scores_physics_undergrad.js"></script>
+  <script src="data/share_snapshot.js"></script>
+  <script>
+    const snapshot = window.SHARE_SNAPSHOT || { schoolPool: [], finalChoices: [] };
+    const planMajors = Array.isArray(window.PLAN_MAJORS) ? window.PLAN_MAJORS : [];
+    const scores2025 = Array.isArray(window.SCORES_2025) ? window.SCORES_2025 : [];
+    const manualScores2025 = Array.isArray(snapshot.manualScores2025) ? snapshot.manualScores2025 : [];
+    const expanded = new Set();
+    const $ = (id) => document.getElementById(id);
+
+    function esc(value) {
+      return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+    }
+    function cleanSchool(value) {
+      return String(value ?? "").replace(/\s+/g, " ").trim();
+    }
+    function norm(value) {
+      return String(value ?? "").replace(/[（）()，,。；;：:、\-\s]/g, "").trim();
+    }
+    function normGroup(value) {
+      return String(value ?? "").replace(/[（）()]/g, "").trim();
+    }
+    function normMajorCode(value) {
+      const text = String(value ?? "").trim();
+      return /^\d{1,2}$/.test(text) ? text.padStart(3, "0") : text;
+    }
+    function schoolKey(row) {
+      return row.schoolCode || row.school || "";
+    }
+    function baseSchool(value) {
+      return cleanSchool(value)
+        .replace(/（[^）]*(中外合作|闽台合作|地方专项|高校专项|面向[^）]+)[^）]*）/g, "")
+        .replace(/\([^)]*(中外合作|闽台合作|地方专项|高校专项|面向[^)]+)[^)]*\)/g, "")
+        .trim();
+    }
+    function majorKey(row) {
+      return `${normGroup(row.groupCode)}|${normMajorCode(row.majorCode)}|${norm(row.major)}`;
+    }
+    function scoreFor(row) {
+      const group = normGroup(row.groupCode);
+      const majorName = norm(row.major);
+      const majorCode = normMajorCode(row.majorCode);
+      const schoolName = baseSchool(row.school);
+      const allScores = manualScores2025.concat(scores2025);
+      return allScores.find((score) =>
+        String(score.school_code || "") === String(row.schoolCode || "") &&
+        normGroup(score.group_code) === group &&
+        norm(score.major_name) === majorName
+      ) || allScores.find((score) =>
+        String(score.school_code || "") === String(row.schoolCode || "") &&
+        normGroup(score.group_code) === group &&
+        majorCode &&
+        normMajorCode(score.major_code) === majorCode
+      ) || allScores.find((score) =>
+        baseSchool(score.school_name) === schoolName &&
+        normGroup(score.group_code) === group &&
+        norm(score.major_name) === majorName
+      ) || allScores.find((score) =>
+        baseSchool(score.school_name) === schoolName &&
+        normGroup(score.group_code) === group &&
+        majorCode &&
+        normMajorCode(score.major_code) === majorCode
+      ) || {};
+    }
+    function tierClass(tier) {
+      if (tier === "冲") return "rush";
+      if (tier === "稳") return "stable";
+      if (tier === "保") return "safe";
+      if (tier === "垫底") return "pass";
+      return "warn";
+    }
+    function rowTier(item) {
+      return item.tier || (item.tiers || [])[0] || "待定";
+    }
+    function rowsForSchool(item) {
+      const key = schoolKey(item);
+      return planMajors.filter((row) => schoolKey(row) === key).sort((a, b) =>
+        normGroup(a.groupCode).localeCompare(normGroup(b.groupCode), "zh-CN", { numeric: true }) ||
+        normMajorCode(a.majorCode).localeCompare(normMajorCode(b.majorCode), "zh-CN", { numeric: true })
+      );
+    }
+    function folded(text) {
+      if (!text) return "";
+      const value = String(text);
+      if (value.length < 36) return esc(value);
+      return `<details><summary>查看</summary>${esc(value)}</details>`;
+    }
+    function renderDetails(item) {
+      const marked = new Set(item.markedMajorKeys || []);
+      const groups = new Map();
+      rowsForSchool(item).forEach((row) => {
+        const group = normGroup(row.groupCode) || "未分组";
+        if (!groups.has(group)) groups.set(group, []);
+        groups.get(group).push(row);
+      });
+      if (!groups.size) return '<span class="muted">未找到该校 2026 招生计划明细。</span>';
+      return Array.from(groups.entries()).map(([group, rows]) => `
+        <div class="group-box">
+          <h3>专业组 ${esc(group)} · ${esc(rows[0].subjectReq || "选科待核")} · ${rows.length} 个专业</h3>
+          <table class="major-table">
+            <thead><tr><th>标记</th><th>专业代码</th><th>专业</th><th>2025分</th><th>2025位次</th><th>2026计划</th><th>学费</th><th>日语</th><th>备注</th></tr></thead>
+            <tbody>${rows.map((row) => {
+              const score = scoreFor(row);
+              const isMarked = marked.has(majorKey(row)) || (item.markedMajors || []).some((label) => label.includes(row.major || ""));
+              return `<tr>
+                <td>${isMarked ? '<span class="tag safe">已标记</span>' : ""}</td>
+                <td>${esc(row.majorCode)}</td>
+                <td>${esc(row.major)}</td>
+                <td>${esc(score.min_score_2025)}</td>
+                <td>${esc(score.min_rank_2025)}</td>
+                <td>${esc(row.plan2026)}</td>
+                <td>${esc(row.tuition)}</td>
+                <td>${esc(row.japaneseEligible || "待核")}</td>
+                <td>${folded(row.remarks || row.hardReason)}</td>
+              </tr>`;
+            }).join("")}</tbody>
+          </table>
+        </div>
+      `).join("");
+    }
+    function render() {
+      const schools = (snapshot.schoolPool || []).filter((item) => !item.removed);
+      $("snapshotMeta").textContent = `只读分享页 · 导出时间 ${snapshot.exportedAt || "未知"} · 点击学校行展开专业明细`;
+      $("schoolCount").textContent = schools.length;
+      $("rushCount").textContent = schools.filter((item) => rowTier(item) === "冲").length;
+      $("stableCount").textContent = schools.filter((item) => rowTier(item) === "稳").length;
+      $("safeCount").textContent = schools.filter((item) => rowTier(item) === "保").length;
+      $("floorCount").textContent = schools.filter((item) => rowTier(item) === "垫底").length;
+      $("markedCount").textContent = schools.reduce((sum, item) => sum + (item.markedMajors || []).length, 0);
+      $("schoolRows").innerHTML = schools.map((item, index) => {
+        const isOpen = expanded.has(index);
+        return `<tr class="school-row" onclick="expanded.${isOpen ? "delete" : "add"}(${index}); render();">
+          <td>${isOpen ? "▾" : "▸"} <span class="tag ${tierClass(rowTier(item))}">${esc(rowTier(item))}</span></td>
+          <td>${esc(item.schoolCode)} ${esc(item.school)}</td>
+          <td>${esc([item.province, item.city].filter(Boolean).join(" "))}</td>
+          <td>${esc((item.groupCodes || []).join("、"))}</td>
+          <td>${esc(item.scoreRange2025 || item.score2025 || "")}</td>
+          <td>${esc(item.rankRange2025 || item.rank2025 || "")}</td>
+          <td>${esc(item.plan2026 || "")}</td>
+          <td>${esc(item.majorCount || "")}</td>
+          <td>${folded((item.markedMajors || []).join("；"))}</td>
+        </tr>${isOpen ? `<tr class="detail-row"><td colspan="9">${renderDetails(item)}</td></tr>` : ""}`;
+      }).join("");
+    }
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# Ignore everything by default for a clean GitHub Pages repo
+*
+
+# Keep Pages files
+!gaokao_dashboard.html
+!share.html
+!GITHUB_PAGES_DEPLOYMENT.md
+!.gitignore
+
+# Keep required data files
+!data/
+!data/share_snapshot.js
+!data/processed/
+!data/processed/2026_plan_majors.js
+!data/processed/2025_scores_physics_undergrad.js
+!data/processed/2025_rank_table_physics_undergrad.js
