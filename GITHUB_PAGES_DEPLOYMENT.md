@@ -11,6 +11,7 @@ Publish these files and directories with the same relative paths:
 - `data/share_snapshot.js`
 - `data/processed/2026_plan_majors.js`
 - `data/processed/2025_scores_physics_undergrad.js`
+- `data/processed/2025_school_scores_physics.js`
 - `data/processed/2025_rank_table_physics_undergrad.js`
 
 Optional but useful for audit or regeneration:
@@ -25,11 +26,14 @@ Optional but useful for audit or regeneration:
 ## Current data alignment
 
 - `2026_plan_majors.js` is generated from:
-  - `data/06--福建/福建2026招生计划/本科批/物理类/福建2026年物理类本科批招生计划/2026年福建物理类本科批招生计划.xlsx`
-  - Current row count: 15051 major-level records.
+  - `data/福建_招生计划_2026.xlsx`
+  - Current row count: 15057 major-level records.
 - `2025_scores_physics_undergrad.js` is generated from:
-  - `data/06--福建/④-其它分类方法/【2017-2025】专业录取分数线/25年全国高校在福建的专业录取分数.xlsx`
-  - Current row count: 8409 physics undergraduate major-level records.
+  - `data/福建-专业分数线-2025.xlsx`
+  - Current row count: 13448 physics undergraduate major-level records.
+- `2025_school_scores_physics.js` is generated from:
+  - `data/06--福建/④-其它分类方法/【2017-2025】投档线/25年全国高校在福建的院校录取分数.xlsx`
+  - Current row count: 3088 school/group admission records.
 - `2025_rank_table_physics_undergrad.js` is generated from:
   - `data/06--福建/④-其它分类方法/【2017-2025】一分一段/福建2025年的一分一段表.xlsx`
   - Current row count: 248 score-rank records above the 2025 physics undergraduate control line.
@@ -38,6 +42,7 @@ Optional but useful for audit or regeneration:
 
 - `gaokao_dashboard.html` uses only relative script paths:
   - `data/processed/2026_plan_majors.js`
+  - `data/processed/2025_school_scores_physics.js`
   - `data/processed/2025_scores_physics_undergrad.js`
   - `data/processed/2025_rank_table_physics_undergrad.js`
 - `share.html` is the read-only sharing page. It uses:
@@ -60,11 +65,18 @@ python3 scripts/import_2025_rank_table.py
 ## Quick local verification
 
 ```bash
-node -e "const fs=require('fs'); const vm=require('vm'); const ctx={window:{}}; vm.createContext(ctx); vm.runInContext(fs.readFileSync('data/processed/2026_plan_majors.js','utf8'),ctx); vm.runInContext(fs.readFileSync('data/processed/2025_scores_physics_undergrad.js','utf8'),ctx); vm.runInContext(fs.readFileSync('data/processed/2025_rank_table_physics_undergrad.js','utf8'),ctx); console.log(ctx.window.PLAN_MAJORS.length, ctx.window.SCORES_2025.length, ctx.window.RANK_TABLE_2025.length)"
+node -e "const fs=require('fs'); const vm=require('vm'); const ctx={window:{}}; vm.createContext(ctx); vm.runInContext(fs.readFileSync('data/processed/2026_plan_majors.js','utf8'),ctx); vm.runInContext(fs.readFileSync('data/processed/2025_scores_physics_undergrad.js','utf8'),ctx); vm.runInContext(fs.readFileSync('data/processed/2025_school_scores_physics.js','utf8'),ctx); vm.runInContext(fs.readFileSync('data/processed/2025_rank_table_physics_undergrad.js','utf8'),ctx); console.log(ctx.window.PLAN_MAJORS.length, ctx.window.SCORES_2025.length, ctx.window.SCHOOL_SCORES_2025.length, ctx.window.RANK_TABLE_2025.length)"
 ```
 
 Expected output:
 
 ```text
-15051 8409 248
+15057 13448 3088 248
 ```
+
+## Sync behavior
+
+- Static GitHub Pages can sync the published database files because they are committed to the repository.
+- Editing records in `gaokao_dashboard.html` are stored in browser `localStorage` (`fj_gaokao_*` keys), so they persist on the same browser/device.
+- Cross-device or multi-user operation-record sync requires a writable backend such as Supabase/Firebase or a private API. GitHub Pages alone cannot safely write edits back to the repository from the browser.
+- Until a backend is added, use the built-in JSON/CSV export/import and share snapshot export as the operation-record transfer path.
