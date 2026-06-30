@@ -79,4 +79,5 @@ Expected output:
 - Static GitHub Pages can sync the published database files because they are committed to the repository.
 - Editing records in `gaokao_dashboard.html` are stored in browser `localStorage` (`fj_gaokao_*` keys), so they persist on the same browser/device.
 - Cross-device or multi-user operation-record sync requires a writable backend such as Supabase/Firebase or a private API. GitHub Pages alone cannot safely write edits back to the repository from the browser.
-- Until a backend is added, use the built-in JSON/CSV export/import and share snapshot export as the operation-record transfer path.
+- Until a backend is added, use `模拟填报表 -> 导出工作状态包` and `导入工作状态包` to transfer all local operation records between devices. The workspace package includes localStorage-backed filters, exclusions, candidate pool, candidate choices, mock applications, manual 2025 score entries, expanded rows, and column widths.
+- CSV exports remain useful for sharing/read-only review, but the workspace JSON package is the preferred round-trip sync format.

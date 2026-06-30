@@ -1934,6 +1934,9 @@
           <button id="exportMockCsv">导出 CSV</button>
           <button id="exportMockJson">导出 JSON</button>
           <button id="exportMockChecklist">导出核验清单</button>
+          <button id="exportWorkspaceState" type="button">导出工作状态包</button>
+          <button id="importWorkspaceStateBtn" type="button">导入工作状态包</button>
+          <input id="importWorkspaceStateFile" class="file-input" type="file" accept=".json,application/json">
         </div>
       </section>
 
@@ -4687,6 +4690,123 @@
       download("福建模拟志愿核验清单.csv", lines.join("\n"), "text/csv;charset=utf-8");
     }
 
+    function safeJsonFromStorage(key, fallback) {
+      try {
+        const value = localStorage.getItem(key);
+        return value ? JSON.parse(value) : fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function buildWorkspaceStatePackage() {
+      return {
+        schema: "fj_gaokao_workspace_state_v1",
+        exportedAt: new Date().toISOString(),
+        app: {
+          title: "福建普通类本科批志愿记录表",
+          dataCounts: {
+            planMajors: planMajors.length,
+            scores2025: scores2025.length,
+            schoolScores2025: schoolScores2025.length,
+            rankTable2025: rankTable2025.length
+          }
+        },
+        localStorage: {
+          [storageKey]: entries,
+          [bandSettingsKey]: safeJsonFromStorage(bandSettingsKey, null),
+          [exclusionSettingsKey]: {
+            groups: Array.from(excludedGroups),
+            majors: Array.from(excludedMajors)
+          },
+          [regionSettingsKey]: {
+            provinces: Array.from(excludedProvinces),
+            cities: Array.from(excludedCities)
+          },
+          [schoolPoolKey]: schoolPool,
+          [manualScoreKey]: manualScores,
+          [poolExpandedKey]: Array.from(expandedPoolSchools),
+          [planColumnWidthKey]: safeJsonFromStorage(planColumnWidthKey, {}),
+          [mockColumnWidthKey]: safeJsonFromStorage(mockColumnWidthKey, {}),
+          [mockApplicationKey]: mockApplications,
+          [mockExpandedKey]: Array.from(expandedMockChoices)
+        }
+      };
+    }
+
+    function exportWorkspaceState() {
+      const stamp = new Date().toISOString().slice(0, 10);
+      download(`福建高考工作状态包-${stamp}.json`, JSON.stringify(buildWorkspaceStatePackage(), null, 2), "application/json;charset=utf-8");
+    }
+
+    function applySetValues(targetSet, values) {
+      targetSet.clear();
+      (values || []).forEach((value) => targetSet.add(value));
+    }
+
+    function applyWorkspaceStatePackage(pkg) {
+      if (!pkg || pkg.schema !== "fj_gaokao_workspace_state_v1" || !pkg.localStorage) {
+        alert("工作状态包格式不正确。");
+        return false;
+      }
+      if (!confirm("导入工作状态包会覆盖当前浏览器里的筛选条件、备选池、候选表、模拟填报表和手动补分。确定继续？")) {
+        return false;
+      }
+      const store = pkg.localStorage;
+      entries = Array.isArray(store[storageKey]) ? store[storageKey] : [];
+      schoolPool = Array.isArray(store[schoolPoolKey]) ? store[schoolPoolKey] : [];
+      manualScores = Array.isArray(store[manualScoreKey]) ? store[manualScoreKey] : [];
+      mockApplications = Array.isArray(store[mockApplicationKey]) ? store[mockApplicationKey] : [];
+      expandedPoolSchools = new Set(Array.isArray(store[poolExpandedKey]) ? store[poolExpandedKey] : []);
+      expandedMockChoices = new Set(Array.isArray(store[mockExpandedKey]) ? store[mockExpandedKey] : []);
+      selectedMockChoiceIds.clear();
+
+      const exclusion = store[exclusionSettingsKey] || {};
+      applySetValues(excludedGroups, exclusion.groups);
+      applySetValues(excludedMajors, exclusion.majors);
+      const region = store[regionSettingsKey] || {};
+      applySetValues(excludedProvinces, region.provinces);
+      applySetValues(excludedCities, region.cities);
+
+      localStorage.setItem(storageKey, JSON.stringify(entries));
+      localStorage.setItem(schoolPoolKey, JSON.stringify(schoolPool));
+      localStorage.setItem(manualScoreKey, JSON.stringify(manualScores));
+      localStorage.setItem(mockApplicationKey, JSON.stringify(mockApplications));
+      localStorage.setItem(poolExpandedKey, JSON.stringify(Array.from(expandedPoolSchools)));
+      localStorage.setItem(mockExpandedKey, JSON.stringify(Array.from(expandedMockChoices)));
+      localStorage.setItem(exclusionSettingsKey, JSON.stringify({ groups: Array.from(excludedGroups), majors: Array.from(excludedMajors) }));
+      localStorage.setItem(regionSettingsKey, JSON.stringify({ provinces: Array.from(excludedProvinces), cities: Array.from(excludedCities) }));
+      if (store[bandSettingsKey]) localStorage.setItem(bandSettingsKey, JSON.stringify(store[bandSettingsKey]));
+      else localStorage.removeItem(bandSettingsKey);
+      localStorage.setItem(planColumnWidthKey, JSON.stringify(store[planColumnWidthKey] || {}));
+      localStorage.setItem(mockColumnWidthKey, JSON.stringify(store[mockColumnWidthKey] || {}));
+
+      loadBandSettings();
+      applyColumnWidths("#planResultCols col[data-col-key]", planColumnWidthKey);
+      applyColumnWidths("#mockApplicationCols col[data-col-key]", mockColumnWidthKey);
+      render();
+      renderManualScores();
+      renderSchoolPool();
+      renderMockApplications();
+      renderPlanSearch();
+      renderFullPlanSearch();
+      alert("工作状态包已导入。");
+      return true;
+    }
+
+    async function importWorkspaceStateFromFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      try {
+        const pkg = JSON.parse(await file.text());
+        applyWorkspaceStatePackage(pkg);
+      } catch (error) {
+        alert(`导入失败：${error.message || error}`);
+      } finally {
+        event.target.value = "";
+      }
+    }
+
     function finalChoiceTiers() {
       return [
         { tier: "冲", label: "冲", className: "rush" },
@@ -5228,6 +5348,9 @@
     $("exportMockCsv").addEventListener("click", exportMockCsv);
     $("exportMockJson").addEventListener("click", exportMockJson);
     $("exportMockChecklist").addEventListener("click", exportMockChecklist);
+    $("exportWorkspaceState").addEventListener("click", exportWorkspaceState);
+    $("importWorkspaceStateBtn").addEventListener("click", () => $("importWorkspaceStateFile").click());
+    $("importWorkspaceStateFile").addEventListener("change", importWorkspaceStateFromFile);
     $("importBtn").addEventListener("click", () => $("importFile").click());
     $("importFile").addEventListener("change", async (event) => {
       const file = event.target.files[0];
